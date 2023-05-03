@@ -84,6 +84,8 @@ router.get('/orders/viewProduct/:id', verifySession.verifyUserLoggedIn, userCont
 
 router.post('/shopPriceSort', verifySession.verifyUserLoggedIn, userControllers.sortPrice);
 
+router.post('/shopPriceSort', verifySession.verifyUserLoggedIn, userControllers.sortPrice);
+
 
 
 module.exports = router;
