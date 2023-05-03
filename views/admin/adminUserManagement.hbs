@@ -1,0 +1,338 @@
+<div class="container-fluid pt-4 px-4">
+                <div class="row g-4">
+                   <div class="col-12">
+                        <div class="bg-secondary rounded h-100 p-4">
+                    
+  <section class="container" style="height: 100vh;">
+     
+    <div class="row py-5">
+      <h2 class="ml-3 text-light">User Details <a class="ml-4" data-toggle="modal" data-target="#exampleModal">
+        <button type="submit" class="btn btn-primary btn1">Add-User</button></a></h2>
+        <div style="margin-left: 800px; margin-top: 10px;">
+          <a href="/admin/AdminLogout"><button type="button" class="btn btn-primary">Logout</button></a>
+        </div>
+         <div style="margin-left: 35px; margin-top: 10px;">
+         {{!-- <button type="submit" class="btn btn-secondary btn1">search</button> --}}
+         {{!-- <form action="/admin/suser" method="post">
+        <div class="mt-1 input-group">
+          <div class="form-outline">
+            <input type="search" name="name" id="form1" class="form-control" />
+          </div>
+          <button type="submit" class="btn btn-primary">Search</button>
+          <a class="ml-5 btn btn-primary" href="/admin">Show All users</a>
+        </div>
+        </form> --}}
+         </a></h2>
+         </div>
+        
+    </div>
+    <div class="text-center">
+      <div class="row table-responsive col-lg-12">
+        <table class="table table-bordered text-light" style="width:100%" id="productsTable">
+          <thead>
+            <tr>
+              <th scope="col">Name</th>
+              <th scope="col">Email</th>
+            {{!-- <th scope="col" class="text-center">Phone No</th> --}}
+              <th scope="col">Block Users</th>
+              <th scope="col">Edit users</th>
+               <th scope="col">Delete Users</th>
+            </tr>
+          </thead>
+          <tbody>
+            {{#each userData}}
+            <tr>
+              <td>{{this.name}}</td>
+              <td>{{this.email}}</td>
+               {{!-- <td class="text-center">{{this.phone}}</td> --}}
+{{#if this.status}}
+<td><button type="button" class="btn btn-success" style="height: 50px;" data-toggle="modal" data-target="#blockModal{{this._id}}">Block</button></td>
+{{else}}
+<td><button type="button" class="btn btn-danger" data-toggle="modal" data-target="#unblockModal{{this._id}}">Unblock</button></td>
+{{/if}}
+
+<!-- Block confirmation modal -->
+<div class="modal fade" id="blockModal{{this._id}}" tabindex="-1" role="dialog" aria-labelledby="blockModal{{this._id}}Label" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="blockModal{{this._id}}Label" style="color: black;" >Confirmation</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button> 
+
+      </div>
+      <div class="modal-body">
+        Are you sure you want to block {{this.name}}?
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+        {{!-- <a href="/admin/adminBlockUser/{{this._id}}"  class="btn btn-primary">Yes, Block User</a> --}}
+        <button type="button" id="confirmBlock{{this._id}}" class="btn btn-secondary" data-dismiss="modal">Yes, Block User</button>
+      </div>
+    </div>
+  </div> 
+</div>
+
+<!-- Unblock confirmation modal -->
+<div class="modal fade" id="unblockModal{{this._id}}" tabindex="-1" role="dialog" aria-labelledby="unblockModal{{this._id}}Label" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="unblockModal{{this._id}}Label" style="color: black;" >Confirmation</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        Are you sure you want to unblock {{this.name}}?
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+        {{!-- <a href="/admin/adminBlockUser/{{this._id}}" class="btn btn-primary">Yes, Unblock User</a> --}}
+        <button type="button" id="confirmUnBlock{{this._id}}" class="btn btn-secondary" data-dismiss="modal">Yes, Unblock User</button>
+      </div>
+    </div>
+  </div>
+</div>      
+              <td><a class="btn btn-primary" data-toggle="modal" data-target="#edit{{this._id}}">Edit</a> &nbsp;</td>
+              <td><a class="btn btn-primary" data-toggle="modal" data-target="#delete{{this._id}}">Delete</a></td>
+            </tr>
+            {{/each}}
+
+            
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+</div>
+
+
+
+
+{{!-- modal-adduser --}}
+
+<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+  aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel"style="color:black">Add User</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form class="text-dark" action="/admin/addUser" method="post" onsubmit="return validateForm()" name="myForm">
+
+          <div class="form-group">
+            <label for="name" class="col-form-label">Name : </label>
+            <input type="text" name="name" style="color: black;" class="border" id="name" >
+          </div>
+          <div class="form-group">
+            <label for="email" class="col-form-label">Email : </label>
+            <input type="text" name="email" class="border" id="email" >
+          </div>
+          
+          <div class="form-group">
+            <label for="password" class="col-form-label">Password : </label>
+            <input type="text" name="password" class="border" id="password" >
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            <button type="submit" class="btn btn-primary">Add User</button>
+          </div>
+        </form>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+{{!-- edit User --}}
+{{#each userData}}
+<div class="modal fade" id="edit{{this._id}}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+  aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel" style="color:black">Edit User</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form class="text-dark" action="/admin/editUser/{{this._id}}" method="post">
+          <div class="form-group">
+            <label for="name" class="col-form-label">Name : </label>
+            <input type="text" name="name" value="{{this.name}}" style="color: black;" class="border" id="name">
+          </div>
+          <div class="form-group">
+            <label for="email" class="col-form-label">Email : </label>
+            <input type="text" name="email" value="{{this.email}}" class="border" id="email">
+          </div>
+          {{!-- <div class="form-group">
+                            <label for="description" class="col-form-label">Phone No : </label>
+                            <input type="text" value="{{this.phone}}" name="phone" class="border" id="phone">
+                        </div>
+            --}}
+          {{!-- <div class="form-group">
+            <label for="password" class="col-form-label">Password : </label>
+            <input type="text" name="password" value="{{this.password}}" class="border" id="password">
+          </div> --}}
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">cancel</button>
+            <a><button type="submit" class="btn btn-primary">confirm</button></a>
+          </div>
+        </form>
+      </div>
+
+    </div>
+  </div>
+</div>
+{{/each}}
+
+{{!-- ======delete======= --}}
+{{#each userData}}
+<div class="modal fade" id="delete{{this._id}}" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle"
+  aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLongTitle"style="color:black">Delete confirmation</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        Do you want to delete user <b class="text-dark">{{this.name}}</b>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">cancel</button>
+        <button type="button"  id="confirmPopUp{{this._id}}"class="btn btn-secondary" data-dismiss="modal">delete</button>
+        {{!-- <a href="#" id="confirmPopUp{{this._id}}" type="button" class="btn btn-danger">delete</a> --}}
+      </div>
+    </div>
+  </div>
+</div>
+{{/each}}
+
+
+
+{{!-- ====delete==== --}}
+<script>
+  const confirmDeleteButtons = document.querySelectorAll('[id^="confirmPopUp"]');
+
+  confirmDeleteButtons.forEach(button => {
+    button.addEventListener('click', (event) => {
+      event.preventDefault();
+      
+      const userId = button.id.replace('confirmPopUp', '');
+      
+      fetch(`/admin/deleteUser/${userId}`, {
+        method: 'get',
+      })
+        .then(response => {
+          if (response.ok) { 
+            alertify.set('notifier','position', 'top-right');
+            alertify.notify('User deleted successfully.', 'success', 2, function(){location.reload();}); // Reload the page after 3 seconds
+          } else {
+            alertify.error('Failed to delete user.');
+          }
+        })
+        .catch(error => {
+          alertify.error('Failed to delete user.');
+          console.error(error);
+        });
+    });
+  });
+</script>
+
+{{!-- ======block======= --}}
+<script>
+  const confirmBlockButtons = document.querySelectorAll('[id^="confirmBlock"]');
+
+ confirmBlockButtons.forEach(button => {
+    button.addEventListener('click', (event) => {
+      event.preventDefault();
+      
+      const userId = button.id.replace('confirmBlock', '');
+      
+      fetch(`/admin/adminBlockUser/${userId}`, {
+        method: 'get',
+      })
+        .then(response => {
+          if (response.ok) {  
+            alertify.set('notifier','position', 'top-right'); 
+            alertify.notify('User block successfully.', 'success', 2, function(){location.reload();}); // Reload the page after 3 seconds
+          } else {
+            alertify.error('Failed block  user.');
+          }
+        })
+        .catch(error => {
+          alertify.error('Failed to block user.');
+          console.error(error);
+        });
+    });
+  });
+</script>
+
+{{!-- =====unblock===== --}}
+<script>
+  const confirmUnBlockButtons = document.querySelectorAll('[id^="confirmUnBlock"]');
+
+ confirmUnBlockButtons.forEach(button => {
+    button.addEventListener('click', (event) => {
+      event.preventDefault();
+      
+      const userId = button.id.replace('confirmUnBlock', '');
+      
+      fetch(`/admin/adminBlockUser/${userId}`, {
+        method: 'get',
+      })
+        .then(response => {
+          if (response.ok) { 
+            alertify.set('notifier','position', 'top-right');  
+            alertify.notify('User Unblocked successfully.', 'success', 2, function(){location.reload();}); // Reload the page after 3 seconds
+          } else {
+            alertify.error('Failed Unblock  user.');
+          }
+        })
+        .catch(error => {
+          alertify.error('Failed to Unblock user.');
+          console.error(error);
+        });
+    });
+  });
+</script>
+
+
+
+<script>
+  function validateForm() {
+    // Get form inputs
+    var name = document.forms["myForm"]["name"].value;
+    var email = document.forms["myForm"]["email"].value;
+    var password = document.forms["myForm"]["password"].value;
+
+    // Check if inputs are empty
+    if (name == "" || email == "" || password == "") {
+      alert("All fields must be filled out");
+      return false;
+    }
+
+    // Check if email is valid
+    var emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailPattern.test(email)) {
+      alert("Please enter a valid email address like a@gmail.com");
+      return false;
+    }
+
+    // Check if password is at least 8 characters long
+    if (password.length < 8) {
+      alert("Password must be at least 8 characters long");
+      return false;
+    }
+  }
+</script>

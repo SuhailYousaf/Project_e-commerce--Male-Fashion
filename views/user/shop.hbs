@@ -1,0 +1,219 @@
+<link rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/ion-rangeslider/2.3.1/css/ion.rangeSlider.min.css" />
+
+<section class="page-add">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-4">
+                    <div class="page-breadcrumb">
+                        <h2>Products<span>.</span></h2>
+                        <a href="/">Home</a>
+                        <a href="/shop" class="active">Products</a>
+                    </div>
+                    <div class="page-breadcrumb">
+                        <h5>Category</h5>
+                        <div class="page-breadcrumbs">
+                        <ul class="container">
+                            {{#each categories}}
+                                <li><a href="/category/{{this.name}}">{{this.name}}</a></li>
+                            {{/each}}
+                        </ul>
+                        </div>
+                        
+                      
+                    </div>
+                </div>
+                <div class="col-lg-8">
+    <a href="/shop">
+        <img src="https://img.freepik.com/free-psd/black-friday-banner-template_23-2148707062.jpg?w=900&t=st=1683052240~exp=1683052840~hmac=65286e3746ac52f56db9da514aaa199c23f9271811b2de7f9217da93ec3621d0" alt="" width="1100" height="400">
+    </a>
+</div>
+
+            </div>
+        </div>
+    </section>
+    <!-- Page Add Section End -->
+
+    <!-- Categories Page Section Begin -->
+    <section class="categories-page spad">
+        <div class="container">
+            <div class="categories-controls">
+                <div class="row">
+                    {{!-- <div class="col-lg-12">
+                        <div class="categories-filter">
+                            <div class="cf-left">
+                                <form action="#">
+                                    <select class="sort">
+                                        <option value="">Sort by</option>
+                                        <option value="">Orders</option>
+                                        <option value="">Newest</option>
+                                        <option value="">Price</option>
+                                    </select>
+                                </form>
+                            </div>
+                            <div class="cf-right">
+                                <span>20 Products</span>
+                                <a href="#">2</a>
+                                <a href="#" class="active">4</a>
+                                <a href="#">6</a>
+                            </div>
+                        </div>
+                    </div> --}}
+                     <div class="col-lg-3">
+                    <div class="categories-filter">
+                         <div class="cf-left mt-3">
+                                    {{!-- <select class="sort"> --}}
+                                        {{!-- <option value="" >Sort by</option> --}}
+                                        <a href="" class="btn btn-dark" onclick="sortPrice(1)">Low to High</a>
+                                        <a href="" class="btn btn-dark" onclick="sortPrice(-1)">High to Low</a>
+                                        {{!-- <option value="" onclick="sortPrice(1)">Low to High</option>
+                                        <option value="" onclick="sortPrice(-1)">High to Low</option> --}}
+                                    {{!-- </select> --}}
+                            </div>
+                    </div>
+                </div>
+                </div>
+            </div>
+            </div>
+            {{!-- <div class="container">
+            <div class="row">
+                {{#each products}}
+                    <div class="col-lg-3 col-md-6">
+                        <div class="single-product-item">
+                            <figure>
+                                <img src="{{this.images.[0]}}" alt="">
+                                <div class="p-status">new</div>
+                                <div class="hover-icon">
+                                    <a href="{{this.images.[0]}}" class="pop-up"><img src="img/icons/zoom-plus.png"
+                                            alt=""></a>
+                                </div>
+                            </figure>
+                            <div class="product-text">
+                                <a href="/product/{{this.slug}}">
+                                    <h5>{{this.name}}</h5>
+                                    <h6>{{this.category}}</h6>
+                                <p>₹{{this.price}}.00</p>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                {{/each}} 
+
+                </div>
+                </div> --}}
+                 <div class="container">
+        <div class="row">
+            {{#if products}}
+            {{#each products}}
+            <div class="col-lg-3 col-md-6">
+                <div class="single-product-item">
+                    <figure>
+                        <img src="{{this.images.[0]}}" alt="">
+                        <div class="p-status">new</div>
+                        <div class="hover-icon">
+                            <a href="{{this.images.[0]}}" class="pop-up"><img src="img/icons/zoom-plus.png" alt=""></a>
+                        </div>
+                    </figure>
+                    <div class="product-text">
+                        <a href="/product/{{this.slug}}">
+                            <h5>{{this.name}}</h5>
+                            <h6>{{this.category}}</h6>
+                            <p>₹{{this.price}}.00</p>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            {{/each}}
+            
+            {{else if sortedProducts}}
+            {{#each sortedProducts}}
+
+            <div class="col-lg-3 col-md-6">
+                <div class="single-product-item">
+                    <figure>
+                        <img src="{{this.images.[0]}}" alt="">
+                        <div class="p-status">new</div>
+                        <div class="hover-icon">
+                            <a href="{{this.images.[0]}}" class="pop-up"><img src="img/icons/zoom-plus.png" alt=""></a>
+                        </div>
+                    </figure>
+                    <div class="product-text">
+                        <a href="/product/{{this.slug}}">
+                            <h5>{{this.name}}</h5>
+                            <h6>{{this.category}}</h6>
+                            <p>₹{{this.price}}.00</p>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            {{/each}}
+            {{else}}
+
+            <div id="notfound">
+                <div class="notfound">
+                    <div class="notfound-404">
+                        <h1>Oops!</h1>
+                        <h2>404 - No Results Found</h2>
+                    </div>
+                    <a href="/shop">Go TO Shop</a>
+                </div>
+            </div>
+            {{/if}}
+
+
+        </div>
+    </div>
+                {{!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.7.7/handlebars.min.js"></script> --}}
+
+</section>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/ion-rangeslider/2.3.1/js/ion.rangeSlider.min.js"></script>
+
+
+{{!-- <script>
+
+   
+
+
+    function sortPrice(value) {
+        
+        axios.post('/shopPriceSort', {
+            minPrice: 1000,
+            maxPrice: 2000,
+            sort: value
+        })
+        
+            .then(() => {
+                location.href = '/shop';
+            })
+            .catch(() => {
+                location.href = '/shop';
+            });
+    },
+
+</script> --}}
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+<script>
+    function sortPrice(value) {
+        const selectMinPrice = 1000;
+        const selectMaxPrice = 3000;
+
+        axios.post('/shopPriceSort', {
+            minPrice: selectMinPrice,
+            maxPrice: selectMaxPrice,
+            sort: value
+        })
+        .then(() => {
+            location.href = '/shop';
+        })
+        .catch(() => {
+            location.href = '/shop';
+        });
+    }
+</script>
+
+
+
+
+

@@ -1,0 +1,64 @@
+<style>
+    .bg-image-vertical { position: relative; overflow: hidden;
+    background-repeat: no-repeat; background-position: right center;
+    background-size: auto 100%; } @media (min-width: 1025px) { .h-custom-2 {
+    height: 100%; } }
+</style>
+
+<section>
+    <div class="container-fluid container">
+        <div class="row">
+            <div class="col-xs-12 col-sm-6 text-black">
+
+                <div
+                    class="d-flex align-items-center h-custom-2 px-5 ms-xl-4 mt-5 pt-5 pt-xl-0 mt-xl-n5"
+                >
+
+                    <form
+                        style="width: 23rem;"
+                        class="mt-5"
+                        action="/otpVarificationLogin"
+                        method="post"
+                    >
+
+                        <h3
+                            class="fw-normal mb-3"
+                            style="letter-spacing: 1px;"
+                        >Log in</h3>
+
+                        <div class="form-outline mb-4">
+                            <input
+                                type="text"
+                                id="form2Example18"
+                                class="form-control form-control-lg"
+                                placeholder="OTP"
+                                name="otp"
+                            />
+                            <label class="form-label" for="form2Example18">
+                                Enter OTP</label>
+                        </div>
+                        {{#if errMsg}}
+                  <label class="text-danger">{{errMsg}}</label>
+                  {{/if}}
+
+                        
+                        <div class="pt-1 mb-4">
+                            <button
+                                class="btn btn-info btn-lg btn-block"
+                                type="submit"
+                            >Submit OTP</button>
+                           
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <div class="col-sm-6 px-0 d-none d-sm-block">
+                <img
+                    src="https://images.unsplash.com/photo-1617019114583-affb34d1b3cd?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxzZWFyY2h8OXx8bW9kZWwlMjBnaXJsfGVufDB8fDB8fA%3D%3D&auto=format&fit=crop&w=500&q=60"
+                    alt="Login image"
+                    style="object-fit: cover; object-position: left; width: 100vh; height: 80vh"
+                />
+            </div>
+        </div>
+    </div>
+</section>

@@ -1,0 +1,145 @@
+<div class="row tm-mt-big">
+    <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
+        <div class="bg-black tm-block">
+            <div class="row">
+                <div class="col-12">
+                    <h2 class="tm-block-title d-inline-block">Add Product</h2>
+                </div>
+            </div>
+             <div class="container-fluid pt-4 px-4">
+                <div class="row g-4">
+                    <div class="col-sm-12 col-xl-6">
+                     <div class="bg-secondary rounded h-100 p-4">
+                        <div class="form-floating mb-3">
+                            
+                            
+                    <form action="/admin/adminAddProduct" method="post" enctype="multipart/form-data" class="tm-edit-product-form" onsubmit="return validateForm()">
+                        <div class="input-group mb-3">
+                            <label for="name" class="col-xl-4 col-lg-4 col-md-4 col-sm-5 col-form-label">Product
+                                Name
+                            </label>
+                            <input id="name" name="name" type="text"
+                                class="form-control validate col-xl-9 col-lg-8 col-md-8 col-sm-7" >
+                        </div>
+                        <div class="input-group mb-3">
+                            <label for="description"
+                                class="col-xl-4 col-lg-4 col-md-4 col-sm-5 mb-2">Description</label>
+                                <input id="description" name="description" type="text"
+                                class="form-control validate col-xl-9 col-lg-8 col-md-8 col-sm-7" >
+                            {{!-- <textarea class="form-control validate col-xl-9 col-lg-8 col-md-8 col-sm-7" rows="3"
+                                name="description" ></textarea> --}}
+                        </div>
+                        <div class="input-group mb-3">
+                            <label for="category"
+                                class="col-xl-4 col-lg-4 col-md-4 col-sm-5 col-form-label">Category</label>
+                                 {{!-- <input id="category" name="category" type="text"
+                                class="form-control validate col-xl-9 col-lg-8 col-md-8 col-sm-7" > --}}
+                                
+                            <select class="custom-select col-xl-9 col-lg-8 col-md-8 col-sm-7" name="category"
+                                id="category" >
+                                <option selected>Select one</option>
+                                {{#each category}}
+                                
+                                <option value="{{this.name}}">{{this.name}}</option>
+                                {{!-- <option>Shirt</option>
+                                <option>Hoodies</option>
+                                <option>Crop-top</option> --}}
+                                {{/each}}
+                            </select>
+                        </div>
+                        <div class="input-group mb-3">
+                            <label for="expire_date" class="col-xl-4 col-lg-4 col-md-4 col-sm-5 col-form-label">Price
+                            </label>
+                            <input id="expire_date" name="price" type="text"
+                                class="form-control validate col-xl-9 col-lg-8 col-md-8 col-sm-7" data-large-mode="true"
+                                >
+                        </div>
+                        <div class="input-group mb-3">
+                            <label for="stock" class="col-xl-4 col-lg-4 col-md-4 col-sm-5 col-form-label">Units
+                                In
+                                Stock
+                            </label>
+                            <input id="stock" name="stock" type="text"
+                                class="form-control validate col-xl-9 col-lg-8 col-md-7 col-sm-7" >
+                        </div>
+
+                </div>
+                <div class="col-xl-4 col-lg-4 col-md-12 mx-auto mb-4">
+                    <div class="tm-product-img-dummy mx-auto">
+                        <i class="fas fa-5x fa-cloud-upload-alt"></i>
+                    </div>
+                    <div class="custom-file mt-3 mb-3">
+                        <input id="fileInput" multiple type="file" style="display:none;" name="image" />
+                        <input type="button" class="btn btn-primary d-block mx-auto" value="Upload ..."
+                            onclick="document.getElementById('fileInput').click();"  />
+                    </div>
+                </div>
+                <div class="input-group mb-3">
+                    <div class="ml-auto col-xl-8 col-lg-8 col-md-8 col-sm-7 pl-0">
+                        <button type="submit" class="btn btn-primary">Add
+                        </button>
+                    </div>
+                </div>
+            </div>
+            </form>
+        </div>
+                </div>
+                </div>
+    </div>
+</div>
+
+
+<script>
+function validateForm() {
+  // Get form fields
+  const nameField = document.getElementById("name");
+  const descriptionField = document.getElementById("description");
+  const categoryField = document.getElementById("category");
+  const priceField = document.getElementById("expire_date");
+  const stockField = document.getElementById("stock");
+  const fileInput = document.getElementById("fileInput");
+  
+  // Check if fields are empty
+  if (nameField.value.trim() == "") {
+    alert("Please enter a product name.");
+    nameField.focus();
+    return false;
+  }
+  if (descriptionField.value.trim() == "") {
+    alert("Please enter a product description.");
+    descriptionField.focus();
+    return false;
+  }
+  if (categoryField.value.trim() == "Select one") {
+    alert("Please select a product category.");
+    categoryField.focus();
+    return false;
+  }
+  if (priceField.value.trim() == "") {
+    alert("Please enter a product price.");
+    priceField.focus();
+    return false;
+  }
+  if (isNaN(priceField.value)) {
+    alert("Please enter a valid number for the price.");
+    priceField.focus();
+    return false;
+  }
+  if (stockField.value.trim() == "") {
+    alert("Please enter the number of units in stock.");
+    stockField.focus();
+    return false;
+  }
+  if (isNaN(stockField.value)) {
+    alert("Please enter a valid number for the stock.");
+    stockField.focus();
+    return false;
+  }
+  if (fileInput.files.length == 0) {
+    alert("Please select a product image.");
+    return false;
+  }
+  
+  return true;
+}
+</script>
