@@ -263,6 +263,7 @@ module.exports = {
     getOrderedProducts: (ordersId) => {
         return new Promise(async (resolve, reject) => {
             ordersId = new objectId(ordersId);
+            console.log("ordersId");
             console.log(ordersId);
             const orders = await db
                 .get()
