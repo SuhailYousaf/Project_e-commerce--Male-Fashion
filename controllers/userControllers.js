@@ -770,6 +770,39 @@ console.log(req.session.sortedProduct);
   });
 },
 
+// Wishlist
+  wishlist: async (req, res) => {
+    const userName = req.session.userName;
+    const wishlist = await userHelpers.getWishlist(req.session.user._id);
+    res.render('user/wishlist', {user: true, userName, wishlist})
+  },
+  wishlistPage: (req, res) => {
+    const productId = req.params.id;
+    userHelpers.addToWishlist(req.session.user._id, productId);
+    res.json({
+      status:"success",
+      message:"added to Wishlist"
+    })
+  },
+
+  deleteWishlist:(req, res) => {
+    const userId = req.session.user._id;
+    const productId = req.params.id;
+    userHelpers.deleteWishlist(userId, productId);
+    res.redirect('back');
+  },
+
+
+  
+
+// User Profile
+userProfile: async (req, res) => {
+  const userName = req.session.userName;
+  const address = await userHelpers.getAddress(req.session.user._id);
+  // console.log(address+"wooooooooooooooooooooooooooooooow");
+  res.render('user/userProfile', {user: true, userName, userDetailes:req.session.user, address});
+},
+
 
 
 

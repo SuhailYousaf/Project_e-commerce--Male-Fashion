@@ -6,7 +6,6 @@ const objectId = require('mongodb-legacy').ObjectId;
 
 module.exports = {
     
-         
     //Admin Login
     doAdminLogin: (adminDetails) => {
         return new Promise ( async (resolve, reject) => {

@@ -3,7 +3,7 @@ var router = express.Router();
 const userControllers = require('../controllers/userControllers');
 const verifySession = require('../middleware/verifySession');
 const userHelpers = require('../helpers/userHelpers');
-// const userHelpers = require("../helpers/userHelpers");
+
 
 
 // User Home, Login, Signup
@@ -79,13 +79,19 @@ router.get('/cancelOrder/:id', verifySession.verifyUserLoggedIn, userControllers
 
 router.get('/orders/viewProduct/:id', verifySession.verifyUserLoggedIn, userControllers.viewDet);
 
+//Wishlist
+router.get('/wishlist', verifySession.verifyUserLoggedIn, userControllers.wishlist);
 
-//sort
+router.get('/addToWishlist/:id', verifySession.verifyUserLoggedIn, userControllers.wishlistPage);
 
+router.get('/deleteWishlist/:id', verifySession.verifyUserLoggedIn, userControllers.deleteWishlist);
+
+
+//sort high to low
 router.post('/shopPriceSort', verifySession.verifyUserLoggedIn, userControllers.sortPrice);
 
-router.post('/shopPriceSort', verifySession.verifyUserLoggedIn, userControllers.sortPrice);
-
+//UserProfile
+router.get('/userProfile', verifySession.verifyUserLoggedIn, userControllers.userProfile);
 
 
 module.exports = router;
