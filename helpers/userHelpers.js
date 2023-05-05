@@ -96,6 +96,40 @@ module.exports = {
         })
       },
 
+      
+// User Profile
+    editProfile: (userId, info) => {
+        console.log(userId)
+        return new Promise ((resolve, reject) => {
+            db.get().collection(collection.USER_COLLECTION).updateOne(
+                
+                {
+                    _id: new objectId(userId)
+                },
+                {
+                    $set:{
+                        name: info.name,
+                        email: info.email,
+                        phone: Number(info.phone)
+                    }
+                }
+            ).then((response) => {
+                console.log("response")
+                console.log(response.name)
+                resolve(response);
+            })
+        })
+    },
+
+    editPassword: (userId, info) => {
+        return new Promise( async (resolve, reject) => {
+            const user = db.get().collection(collection.USER_COLLECTION).findOne({
+                _id: new objectId(userId)
+            })
+            resolve(user);
+        })
+    },
+
     //   ===========forgotPass===============
   checkuserBlockExist:(email)=>{
     let response={}

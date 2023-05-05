@@ -221,6 +221,14 @@ module.exports = {
                 console.log(err);
             });
     },
+
+    adminSearchProduct: async (req, res) => {
+        const adminName = req.session.adminName;
+        // console.log(req.body.name+"weweweweew");
+        const product = await adminHelpers.adminSearchProduct(req.body.name);
+        // console.log(product+"qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq");
+        res.render("admin/adminProduct", { admin: true, adminName, product });
+    },
     // Admin Category Management
     getCategory: (req, res) => {
         const adminName = req.session.adminName;
@@ -278,11 +286,5 @@ module.exports = {
         });
     },
 
-    adminSearchProduct: async (req, res) => {
-        const adminName = req.session.adminName;
-        // console.log(req.body.name+"weweweweew");
-        const product = await adminHelpers.adminSearchProduct(req.body.name);
-        // console.log(product+"qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq");
-        res.render("admin/adminProduct", { admin: true, adminName, product });
-    },
+    
 };

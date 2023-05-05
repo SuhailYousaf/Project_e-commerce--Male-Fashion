@@ -41,6 +41,7 @@ router.get('/product/:id',verifySession.verifyUserLoggedIn, userControllers.prod
 
 router.get('/category/:name', verifySession.verifyUserLoggedIn, userControllers.categoryFilter);
 
+router.post('/userSearchProduct', verifySession.verifyUserLoggedIn, userControllers.userSearchProduct);
 
 
 // otp
@@ -87,11 +88,19 @@ router.get('/addToWishlist/:id', verifySession.verifyUserLoggedIn, userControlle
 router.get('/deleteWishlist/:id', verifySession.verifyUserLoggedIn, userControllers.deleteWishlist);
 
 
-//sort high to low
+//Filter
+router.post('/shopPriceFilter', verifySession.verifyUserLoggedIn, userControllers.priceFilter);
+
 router.post('/shopPriceSort', verifySession.verifyUserLoggedIn, userControllers.sortPrice);
+
 
 //UserProfile
 router.get('/userProfile', verifySession.verifyUserLoggedIn, userControllers.userProfile);
+
+router.post('/userProfilePost', verifySession.verifyUserLoggedIn, userControllers.userProfilePost);
+
+router.get('/userManageAddress', verifySession.verifyUserLoggedIn, userControllers.manageAddress);
+
 
 
 module.exports = router;

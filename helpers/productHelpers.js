@@ -150,6 +150,45 @@ getListedCategory:()=>{
         resolve(categories);
     })
 },
+filterPrice: (minPrice, maxPrice, Category) => {
+    return new Promise(async (resolve, reject) => {
+      let filteredProducts;
+      if (Category) {
+        filteredProducts = await db.get().collection(collection.PRODUCT_COLLECTION).aggregate([
+          {
+            $lookup: {
+              from: 'category',
+              localField: 'category',
+              foreignField: 'name',
+              as: 'result'
+            }
+          },
+          {
+            $match: {
+              category: Category
+            }
+          },
+          {
+            $match: {
+              price: {
+                $gte: parseInt(minPrice),
+                $lte: parseInt(maxPrice)
+              }
+            }
+          }
+        ]).toArray();
+      } else {
+        filteredProducts = await db.get().collection(collection.PRODUCT_COLLECTION).find({
+          price: {
+            $gte: parseInt(minPrice),
+            $lte: parseInt(maxPrice)
+          }
+        }).toArray();
+      }
+      resolve(filteredProducts);
+    })
+  },
+
 
 sortPrice:(detailes, category) => {
     console.log("inside1")
@@ -201,6 +240,21 @@ sortPrice:(detailes, category) => {
     }
         
     });
+  },
+
+  userSearchProduct:(serach)=> {
+    return new Promise ( async (resolve, reject) => {
+        await db.get().collection(collection.PRODUCT_COLLECTION).find(
+            {
+                name:{$regex: new RegExp(serach), $options:"i"}
+            }
+        ).toArray()
+        .then((productData) => {
+            resolve(productData);
+        }).catch((err) => {
+            reject(err);
+        })
+    })
   }
   
 }

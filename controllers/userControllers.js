@@ -4,6 +4,7 @@ const userHelpers = require("../helpers/userHelpers");
 const cartHelpers = require("../helpers/cartHelpers");
 const { ObjectId } = require("mongodb");
 const { default: axios } = require("axios");
+const { response } = require("../app");
 
 // Twilio-config
 require("dotenv").config();
@@ -386,16 +387,14 @@ module.exports = {
             });
     },
 
-    //     shopPage: async(req, res) => {
-    //   const userName = req.session.userName;
-    //   const categories = await productHelpers.getListedCategory();
-    //   productHelpers.getProducts().then((products) => {
-    //       res.render("user/shop", { user: true, categories, userName, products});
-    //     }).catch((err) => {
-    //       // res.render("users/shop", { user: true, userName });
-    //       console.log(err);
-    //     });
-    // },
+    userSearchProduct: async (req, res) => {
+        const userName = req.session.userName;
+        console.log("weweweweew");
+        const product = await productHelpers.userSearchProduct(req.body.name);
+        console.log(product+"qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq");
+        res.render("user/shop", { user: true, userName, product });
+    },
+
 
     //User Cart Page
     shopPage: async (req, res) => {
@@ -619,11 +618,24 @@ module.exports = {
         res.render("user/viewDet", { user: true, userName, orders });
     },
 
-    //sort
+  
+//Price Sort Filter 
+priceFilter: async (req, res) => {
+    req.session.minPrice = req.body.minPrice;
+    req.session.maxPrice = req.body.maxPrice;
+    const category = req.session.category; 
+
+    req.session.filteredProduct = await productHelpers.filterPrice(req.session.minPrice, req.session.maxPrice, category);
+    // console.log(req.session.filteredProduct+"asasasasssssssssssssssssss");
+    res.json({
+      status: "success"
+    });
+  },
+
     sortPrice: async (req, res) => {
         console.log("inside");
-        req.session.minPrice = 1000;
-        req.session.maxPrice = 2000;
+        req.session.minPrice = req.body.minPrice;
+        req.session.maxPrice = req.body.maxPrice;
         const category = req.session.category;
         req.session.sortedProduct = await productHelpers.sortPrice(
             req.body,
@@ -670,4 +682,31 @@ module.exports = {
             address,
         });
     },
+
+    userProfilePost: (req, res) => {
+        const userId = req.session.user._id;
+        userHelpers.editProfile(userId, req.body).then(() => {
+          if(req.body.oldPassword.length > 1){
+            userHelpers.editPassword(userId, req.body).then((response) => {
+              if(response){
+                req.session.changePassword = "";
+                res.redirect('/userProfile')
+              }else{
+                req.session.changePassword = "Invalid old password";
+                res.redirect('/userProfile')
+              }
+            })
+          }else{
+            req.session.changePassword = "";
+            res.redirect('/userProfile')
+          }
+        })
+      },
+    
+      manageAddress: async(req, res) => {
+        const userName = req.session.userName;
+        console.log(userName)+"sfdbvfffffffffff"
+        const addresses = await userHelpers.getAddress(req.session.user._id);
+        res.render('user/manageAddress', {user: true, userName, addresses})
+      },
 };
