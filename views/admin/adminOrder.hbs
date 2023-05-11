@@ -21,6 +21,7 @@
                                 <th scope="col">Status</th>
                                 <th scope="col" class="text-center">Image</th>
                                 <th scope="col">Edit Status</th>
+                                {{!-- <th scope="col">View Status</th> --}}
                             </tr>
                         </thead>
                         <tbody>
@@ -37,6 +38,8 @@
                                 <td>{{status}}</td>
                                 <td> {{#each products}}<img src="{{product.images.[0]}}" alt="" style="width: 60px; height: 60px;" >{{/each}} 
                                 </td>
+                                
+
                                 {{!-- <td><a data-toggle="modal" data-target="#edit{{_id}}"><i
                                             class="fas fa-edit"></i></a></td> --}}
                                              <td>
@@ -50,7 +53,10 @@
       </style>
     </i>
   </a>
-</td>
+           {{!-- <td> <div class="col-md-4 col-sm-12 text-right">
+                         <a href="/admin/viewProducts/{{this._id}}" data-toggle="modal" data-target="#added" class="btn btn-small btn-primary">View Details</a>
+                        <a href="/admin/viewProducts/{{this._id}}" class="btn btn-small btn-primary">View Details</a>
+                    </div></td> --}}
 
                             </tr>
 
@@ -109,3 +115,29 @@
             </div>
         </div>
     </div>
+
+    {{!-- Add Coupon --}}
+   
+<div class="modal fade" id="added" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Add Coupon</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form class="text-dark" action="/admin/adminAddCoupon" method="post">
+                   <div class="form-group">
+                            <label for="name" class="col-form-label">Product Name : </label>
+                            <input type="text" name="name" value="{{this.name}}" style="color: black;" class="border"
+                                id="name">
+                        </div>
+
+
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

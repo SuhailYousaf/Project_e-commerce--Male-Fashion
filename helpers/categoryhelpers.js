@@ -30,6 +30,7 @@ module.exports = {
         })
     },
 
+
     deleteCategory: (categoryId) => {
         return new Promise ((resolve, reject) => {
             db.get().collection(collection.CATEGORY_COLLECTION).deleteOne(

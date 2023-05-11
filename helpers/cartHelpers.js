@@ -151,47 +151,90 @@ module.exports = {
         })
       },
   
-      getCartTotal:(userId)=>{
-          return new Promise((resolve, reject) => {
-            db.get().collection(collection.CART_COLLECTION)
-            .aggregate([
-              {
-                $match: { 
-                     userId: new objectId(userId) }
-              },
-              {
-                $unwind: "$product"
-              },
-              {
-                $lookup: {
-                  from: 'product',
-                  localField: 'product.productId',
-                  foreignField: "_id",
-                  as: "result"
+    //   getCartTotal:(userId)=>{
+    //       return new Promise((resolve, reject) => {
+    //         db.get().collection(collection.CART_COLLECTION)
+    //         .aggregate([
+    //           {
+    //             $match: { 
+    //                  userId: new objectId(userId) }
+    //           },
+    //           {
+    //             $unwind: "$product"
+    //           },
+    //           {
+    //             $lookup: {
+    //               from: 'product',
+    //               localField: 'product.productId',
+    //               foreignField: "_id",
+    //               as: "result"
+    //             }
+    //           },
+    //           {
+    //               $project: {
+    //                 _id: 0,
+    //                 product: { $arrayElemAt: ["$result", 0] },
+    //                 quantity: "$product.quantity"
+    //               }
+    //             },
+    //             {
+    //               $group:{
+    //                 _id:null,
+    //                 total:{$sum:{$multiply:['$quantity','$product.price']}}
+    //               }
+    //             }
+    //         ]).toArray()
+    //           .then((response) => {
+    //               resolve(response[0].total)
+    //           })
+    //           .catch((err) => {
+    //             reject(err);
+    //           });
+    //       });      
+    //   },
+
+    getCartTotal:(userId)=>{
+        return new Promise((resolve, reject) => {
+          db.get().collection(collection.CART_COLLECTION)
+          .aggregate([
+            {
+              $match: { 
+                   userId: new objectId(userId) }
+            },
+            {
+              $unwind: "$product"
+            },
+            {
+              $lookup: {
+                from: 'product',
+                localField: 'product.productId',
+                foreignField: "_id",
+                as: "result"
+              }
+            },
+            {
+                $project: {
+                  _id: 0,
+                  product: { $arrayElemAt: ["$result", 0] },
+                  quantity: "$product.quantity"
                 }
               },
               {
-                  $project: {
-                    _id: 0,
-                    product: { $arrayElemAt: ["$result", 0] },
-                    quantity: "$product.quantity"
-                  }
-                },
-                {
-                  $group:{
-                    _id:null,
-                    total:{$sum:{$multiply:['$quantity','$product.price']}}
-                  }
+                $group:{
+                  _id:null,
+                  total:{$sum:{$multiply:['$quantity','$product.price']}}
                 }
-            ]).toArray()
-              .then((response) => {
-                  resolve(response[0].total)
-              })
-              .catch((err) => {
-                reject(err);
-              });
-          });      
-      },
+              }
+          ]).toArray()
+            .then((response) => {
+                resolve(response[0].total)
+            })
+            .catch((err) => {
+              reject(err);
+            });
+        });      
+    },
+
 
       
 }

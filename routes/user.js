@@ -3,7 +3,7 @@ var router = express.Router();
 const userControllers = require('../controllers/userControllers');
 const verifySession = require('../middleware/verifySession');
 const userHelpers = require('../helpers/userHelpers');
-// const userHelpers = require("../helpers/userHelpers");
+
 
 
 // User Home, Login, Signup
@@ -19,13 +19,13 @@ router.get('/signup',verifySession.ifUserLoggedIn, userControllers.signUp);
 
 router.post('/signup', userControllers.signUpPost);
 
-router.get('/otpLoginPage',userControllers.otpLoginPage)
+router.get('/otpLoginPage', userControllers.otpLoginPage)
 
 router.post('/otpLoginPagePost',userControllers.otpLoginPagePost)
 
-router.post('/otpVarificationLogin',userControllers.otpVarificationLogin)
+router.post('/otpVarificationLogin',verifySession.ifUserLoggedIn, userControllers.otpVarificationLogin)
 
-router.get('/forgotPass',userControllers.forgotPass)
+router.get('/forgotPass', userControllers.forgotPass)
 
 router.post ('/forgotPasswordPost',userControllers.forgotPasswordPost)
 
@@ -41,6 +41,7 @@ router.get('/product/:id',verifySession.verifyUserLoggedIn, userControllers.prod
 
 router.get('/category/:name', verifySession.verifyUserLoggedIn, userControllers.categoryFilter);
 
+router.post('/user/userSearchProduct', verifySession.verifyUserLoggedIn, userControllers.userSearchProduct);
 
 
 // otp
@@ -72,17 +73,38 @@ router.get('/deleteAddress/:id' , verifySession.verifyUserLoggedIn, userControll
 
 router.post('/placeOrder', verifySession.verifyUserLoggedIn, userControllers.placeOrder);
 
+router.post('/verifyPayment', verifySession.verifyUserLoggedIn, userControllers.verifyPayment);
+
+
 // User  Orders
 router.get('/orders', verifySession.verifyUserLoggedIn, userControllers.orders);
 
 router.get('/cancelOrder/:id', verifySession.verifyUserLoggedIn, userControllers.cancelOrder);
 
+router.get('/returnOrder/:id', verifySession.verifyUserLoggedIn, userControllers.returnOrder);   
+
 router.get('/orders/viewProduct/:id', verifySession.verifyUserLoggedIn, userControllers.viewDet);
 
+//Wishlist
+router.get('/wishlist', verifySession.verifyUserLoggedIn, userControllers.wishlist);
 
-//sort
+router.get('/addToWishlist/:id', verifySession.verifyUserLoggedIn, userControllers.wishlistPage);
+
+router.get('/deleteWishlist/:id', verifySession.verifyUserLoggedIn, userControllers.deleteWishlist);
+
+
+//Filter
+router.post('/shopPriceFilter', verifySession.verifyUserLoggedIn, userControllers.priceFilter);
 
 router.post('/shopPriceSort', verifySession.verifyUserLoggedIn, userControllers.sortPrice);
+
+
+//UserProfile
+router.get('/userProfile', verifySession.verifyUserLoggedIn, userControllers.userProfile);
+
+router.post('/userProfilePost', verifySession.verifyUserLoggedIn, userControllers.userProfilePost);
+
+router.get('/userManageAddress', verifySession.verifyUserLoggedIn, userControllers.manageAddress);
 
 
 

@@ -1,3 +1,4 @@
+<!--Plugin CSS file with desired skin -->
 <link rel="stylesheet"
     href="https://cdnjs.cloudflare.com/ajax/libs/ion-rangeslider/2.3.1/css/ion.rangeSlider.min.css" />
 
@@ -32,76 +33,73 @@
             </div>
         </div>
     </section>
-    <!-- Page Add Section End -->
+   <!-- Page Add Section End -->
+
+{{!-- pagination --}}
+<input id="totalCount" hidden value="{{totalPages}}">
+<input id="currentPages" hidden value="{{currentPage}}">
 
     <!-- Categories Page Section Begin -->
     <section class="categories-page spad">
         <div class="container">
             <div class="categories-controls">
                 <div class="row">
-                    {{!-- <div class="col-lg-12">
-                        <div class="categories-filter">
-                            <div class="cf-left">
-                                <form action="#">
-                                    <select class="sort">
-                                        <option value="">Sort by</option>
-                                        <option value="">Orders</option>
-                                        <option value="">Newest</option>
-                                        <option value="">Price</option>
-                                    </select>
-                                </form>
-                            </div>
-                            <div class="cf-right">
-                                <span>20 Products</span>
-                                <a href="#">2</a>
-                                <a href="#" class="active">4</a>
-                                <a href="#">6</a>
-                            </div>
-                        </div>
-                    </div> --}}
                      <div class="col-lg-3">
                     <div class="categories-filter">
+                          <!--  price slider -->
+                        <div class="col-md-12">
+                            <label for="range">Price range:</label>
+                            <div class="range-slider">
+                                <input type="text" id="range" class="js-range-slider" value="" />
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="extra-controls mb-4">
+                                <label hidden for="selectMinPrice">Minimum price:</label>
+                                <input hidden type="number" class="form-control" id="selectMinPrice" name="minPrice"
+                                    value="{{minPrice}}" />
+
+                                <label hidden for="selectMaxPrice">Maximum price:</label>
+                                <input hidden type="number" class="form-control" id="selectMaxPrice" name="maxPrice"
+                                    value="{{maxPrice}}" />
+
+                                <div class="text-center">
+                                    <button class="btn btn-dark" onclick="applyFilter()">Apply</button>
+                                </div>
+                            </div>
+                        </div>
                          <div class="cf-left mt-3">
                                     {{!-- <select class="sort"> --}}
                                         {{!-- <option value="" >Sort by</option> --}}
                                         <a href="" class="btn btn-dark" onclick="sortPrice(1)">Low to High</a>
                                         <a href="" class="btn btn-dark" onclick="sortPrice(-1)">High to Low</a>
+                                    
+                               
                                         {{!-- <option value="" onclick="sortPrice(1)">Low to High</option>
                                         <option value="" onclick="sortPrice(-1)">High to Low</option> --}}
                                     {{!-- </select> --}}
                             </div>
+                            
                     </div>
                 </div>
+<div class="main">
+  <!-- Another variation with a button -->
+  <form action="/user/userSearchProduct" method="post">
+    <div style="padding-left: 494px;" class="input-group col-*">
+      <input type="search" name="name" class="form-control form-control-sm" placeholder="Search">
+      <div class="input-group-append">
+        <button class="btn btn-secondary" type="submit">
+          <i class="fa fa-search"></i>
+        </button>
+      </div>
+    </div>
+  </form>
+</div>
                 </div>
             </div>
             </div>
-            {{!-- <div class="container">
-            <div class="row">
-                {{#each products}}
-                    <div class="col-lg-3 col-md-6">
-                        <div class="single-product-item">
-                            <figure>
-                                <img src="{{this.images.[0]}}" alt="">
-                                <div class="p-status">new</div>
-                                <div class="hover-icon">
-                                    <a href="{{this.images.[0]}}" class="pop-up"><img src="img/icons/zoom-plus.png"
-                                            alt=""></a>
-                                </div>
-                            </figure>
-                            <div class="product-text">
-                                <a href="/product/{{this.slug}}">
-                                    <h5>{{this.name}}</h5>
-                                    <h6>{{this.category}}</h6>
-                                <p>₹{{this.price}}.00</p>
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-                {{/each}} 
-
-                </div>
-                </div> --}}
-                 <div class="container">
+          <div class="container">
         <div class="row">
             {{#if products}}
             {{#each products}}
@@ -124,7 +122,48 @@
                 </div>
             </div>
             {{/each}}
-            
+             {{else if product}}
+            {{#each product}}
+            <div class="col-lg-3 col-md-6">
+                <div class="single-product-item">
+                    <figure>
+                        <img src="{{this.images.[0]}}" alt="">
+                        <div class="p-status">new</div>
+                        <div class="hover-icon">
+                            <a href="{{this.images.[0]}}" class="pop-up"><img src="img/icons/zoom-plus.png" alt=""></a>
+                        </div>
+                    </figure>
+                    <div class="product-text">
+                        <a href="/product/{{this.slug}}">
+                            <h5>{{this.name}}</h5>
+                            <h6>{{this.category}}</h6>
+                            <p>₹{{this.price}}.00</p>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            {{/each}}
+            {{else if filteredProducts}}
+            {{#each filteredProducts}}
+            <div class="col-lg-3 col-md-6">
+                <div class="single-product-item">
+                    <figure>
+                        <img src="{{this.images.[0]}}" alt="">
+                        <div class="p-status">new</div>
+                        <div class="hover-icon">
+                            <a href="{{this.images.[0]}}" class="pop-up"><img src="img/icons/zoom-plus.png" alt=""></a>
+                        </div>
+                    </figure>
+                    <div class="product-text">
+                        <a href="/product/{{this.slug}}">
+                            <h5>{{this.name}}</h5>
+                            <h6>{{this.category}}</h6>
+                            <p>₹{{this.price}}.00</p>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            {{/each}}
             {{else if sortedProducts}}
             {{#each sortedProducts}}
 
@@ -149,7 +188,7 @@
             {{/each}}
             {{else}}
 
-            <div id="notfound">
+           <div id="notfound">
                 <div class="notfound">
                     <div class="notfound-404">
                         <h1>Oops!</h1>
@@ -159,61 +198,105 @@
                 </div>
             </div>
             {{/if}}
-
-
+           
         </div>
+         {{!-- Pagination --}}
+        <div class="col d-flex justify-content-center pagination text-dark">
+        </div>
+        
+        
     </div>
                 {{!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.7.7/handlebars.min.js"></script> --}}
 
 </section>
 
+
+<!-- Your JavaScript code for initializing and updating the range slider Sort price -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/ion-rangeslider/2.3.1/js/ion.rangeSlider.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 
+<script>
+    const range = document.getElementById('range');
+    const selectMinPrice = document.getElementById('selectMinPrice');
+    const selectMaxPrice = document.getElementById('selectMaxPrice');
 
-{{!-- <script>
+    // initialize range slider
+    let instance = null;
+    const min = 500;
+    const max = 3000;
+    const defaultMin = min;
+    const defaultMax = max;
+    range.value = `${defaultMin},${defaultMax}`;
+    instance = $(range).ionRangeSlider({
+        skin: "square",
+        type: "double",
+        min: min,
+        max: max,
+        from: defaultMin,
+        to: defaultMax,
+        onStart: updateInputs,
+        onChange: updateInputs
+    }).data("ionRangeSlider");
 
-   
+    function updateInputs(data) {
+        selectMinPrice.value = data.from;
+        selectMaxPrice.value = data.to;
+    }
 
+    function applyFilter() {
+        event.preventDefault();
+
+        console.log(`Selected price range: ${selectMinPrice.value} - ${selectMaxPrice.value}`);
+
+        axios.post('/shopPriceFilter', {
+            minPrice: selectMinPrice.value,
+            maxPrice: selectMaxPrice.value,
+        })
+            .then(() => {
+                location.href = '/shop';
+            })
+            .catch(() => {
+                console.error('Error applying price filter')
+            });
+    }
 
     function sortPrice(value) {
-        
         axios.post('/shopPriceSort', {
-            minPrice: 1000,
-            maxPrice: 2000,
+            minPrice: selectMinPrice.value,
+            maxPrice: selectMaxPrice.value,
             sort: value
         })
-        
             .then(() => {
                 location.href = '/shop';
             })
             .catch(() => {
                 location.href = '/shop';
             });
-    },
-
-</script> --}}
-<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-<script>
-    function sortPrice(value) {
-        const selectMinPrice = 1000;
-        const selectMaxPrice = 3000;
-
-        axios.post('/shopPriceSort', {
-            minPrice: selectMinPrice,
-            maxPrice: selectMaxPrice,
-            sort: value
-        })
-        .then(() => {
-            location.href = '/shop';
-        })
-        .catch(() => {
-            location.href = '/shop';
-        });
     }
+
 </script>
 
 
+{{!-- Pagination  --}}
+<script>
+    document.addEventListener("DOMContentLoaded", () =>{
+        const totalCountInput = document.getElementById('totalCount');
+        const totalCount = Number(totalCountInput.value);
 
+        const currentPageInput  = document.getElementById('currentPages');
+        const currentPage = Number(currentPageInput.value);
+        const totalPages = Math.ceil(totalCount/8);
 
+        let page = currentPage || 1;
+        const paginationElement = document.querySelector('.pagination')
 
+        let pageLinks = '';
+        console.log(currentPage);
+        console.log(totalPages);
+        for(let i = 1; i <= totalPages; i++){
+            pageLinks += `<ul style="list-style-type: none;"><li class="page-item${i === page ? ' active' : ''}"><a class="page-link" style="color: black;" href="?page=${i}">${i}</a></li></ul>`;
+        }
+        paginationElement.innerHTML = pageLinks;
+    });
+</script>

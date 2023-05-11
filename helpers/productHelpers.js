@@ -20,16 +20,26 @@ module.exports={
     })
 },
 
-getProducts:() => {
-    return new Promise (async (resolve, reject) => {
-        const productData = await db.get().collection(collection.PRODUCT_COLLECTION).find().toArray();
-        if(productData){
-            resolve(productData);
-        }else{
-            resolve("No data to show")
-        }
-    })
-  },
+
+
+getProducts:(currentPage) => {
+  return new Promise (async (resolve, reject) => {
+      currentPage = parseInt(currentPage);
+      console.log('currentPage');
+      console.log(currentPage);
+      const limit = 8;
+      const skip = (currentPage-1)*limit;
+      const productData = await db.get().collection(collection.PRODUCT_COLLECTION).find().skip(skip).limit(limit).toArray();
+      if(productData){
+          console.log("productData");
+          console.log(productData);
+          resolve(productData);
+      }else{
+          resolve("No data to show")
+      }
+  })
+},
+
 
   getSingleProduct: (slug) => {
     return new Promise (async (resolve, reject) =>{
@@ -139,25 +149,81 @@ editProductImage: (id, imgUrls) => {
     })
 },
 
+// getListedCategory:()=>{
+//     return new Promise(async(resolve, reject)=>{
+//         const categories = await db.get().collection(collection.CATEGORY_COLLECTION).find(
+//             {
+//                 listed : true
+//             }
+//         ).toArray();
+//         console.log(categories);
+//         resolve(categories);
+//     })
+// },
+
+//sort filter search
+
 getListedCategory:()=>{
-    return new Promise(async(resolve, reject)=>{
-        const categories = await db.get().collection(collection.CATEGORY_COLLECTION).find(
-            {
-                listed : true
-            }
-        ).toArray();
-        console.log(categories);
-        resolve(categories);
-    })
+  return new Promise(async(resolve, reject)=>{
+      const categories = await db.get().collection(collection.CATEGORY_COLLECTION).find(
+          {
+              listed : true
+          }
+      ).toArray();
+      console.log(categories);
+      resolve(categories);
+  })
 },
 
+filterPrice: (minPrice, maxPrice, Category) => {
+    return new Promise(async (resolve, reject) => {
+      let filteredProducts;
+      if (Category) {
+        filteredProducts = await db.get().collection(collection.PRODUCT_COLLECTION).aggregate([
+          {
+            $lookup: {
+              from: 'category',
+              localField: 'category',
+              foreignField: 'name',
+              as: 'result'
+            }
+          },
+          {
+            $match: {
+              category: Category
+            }
+          },
+          {
+            $match: {
+              price: {
+                $gte: parseInt(minPrice),
+                $lte: parseInt(maxPrice)
+              }
+            }
+          }
+        ]).toArray();
+      } else {
+        filteredProducts = await db.get().collection(collection.PRODUCT_COLLECTION).find({
+          price: {
+            $gte: parseInt(minPrice),
+            $lte: parseInt(maxPrice)
+          }
+        }).toArray();
+      }
+      resolve(filteredProducts);
+    })
+  },
+
+
 sortPrice:(detailes, category) => {
-    console.log("inside1")
+  console.log("details")
+    console.log(detailes)
     return new Promise (async (resolve, reject) => {
     try{
         const minPrice = Number(detailes.minPrice);
         const maxPrice = Number(detailes.maxPrice);
-        const value = detailes.sort;
+        const value = detailes.sort
+        console.log("value"+value)
         let product;
 
         if(category){
@@ -201,6 +267,28 @@ sortPrice:(detailes, category) => {
     }
         
     });
+  },
+
+  totalPages:()=> {
+    return new Promise(async (resolve, reject) => {
+        const totalCount = await db.get().collection(collection.PRODUCT_COLLECTION).countDocuments({});
+        resolve(totalCount);
+    })
+  },
+
+  userSearchProduct:(serach)=> {
+    return new Promise ( async (resolve, reject) => {
+        await db.get().collection(collection.PRODUCT_COLLECTION).find(
+            {
+                name:{$regex: new RegExp(serach), $options:"i"}
+            }
+        ).toArray()
+        .then((productData) => {
+            resolve(productData);
+        }).catch((err) => {
+            reject(err);
+        })
+    })
   }
   
 }

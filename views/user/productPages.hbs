@@ -80,7 +80,7 @@
                         <li><span>In stock :</span> {{product.stock}}</li>
                         <li><span>Tags :</span> {{product.category}}, elegant, cool</li>
                     </ul>
-                    <div class="product-quantity">
+                    {{!-- <div class="product-quantity">
                         <div class="pro-qty">
                             <input type="text" value="1">
                         </div>
@@ -90,7 +90,20 @@
                         <li>Product Information</li>
                         <li>Reviews</li>
                         <li>Product Care</li>
-                    </ul>
+                    </ul> --}}
+                    <div class="input-group mb-3">
+                       <a onclick="addToCart('{{product._id}}')" class="primary-btn pc-btn">Add to cart</a>
+                    {{#if userName}}
+                        <a onclick="addWishlist('{{product._id}}')" class="primary-btn pc-btn mx-4">Add to Wishlist</a>
+                        {{else}}
+                        <a href="/login" class="primary-btn pc-btn mx-4">Add to Wishlist</a>
+                        {{/if}}
+                    <ul class="p-info">
+                        <li>Product Information</li>
+                        <li>Reviews</li>
+                        <li>Product Care</li>
+                        </ul>
+                    </div>
                 </div>
             </div>
         </div>
@@ -169,7 +182,7 @@
     </section>
 <!-- Related Product Section End -->
 
-{{!-- axios --}}
+{{!-- axios AddToCart and AddToWishlist --}}
 <script>
     function addToCart(productId) {
         console.log("apicall")
@@ -182,7 +195,7 @@
                     gravity: "bottom",
                     position: "center",
                     style: {
-                        background: "linear-gradient(to right, #00b09b, #96c93d)",
+                        background: "linear-gradient(109.6deg, rgba(0, 0, 0, 0.93) 11.2%, rgb(63, 61, 61) 78.9%)",
                     }
                 }).showToast();
             }
@@ -194,12 +207,40 @@
                 gravity: "bottom",
                 position: "center",
                 style: {
-                    background: "linear-gradient(to right, #00b09b, #96c93d)",
+                    background: "linear-gradient(109.6deg, rgba(0, 0, 0, 0.93) 11.2%, rgb(63, 61, 61) 78.9%)",
                 }
             }).showToast();
         })
     }
+   function addWishlist(productId) {
+  axios.get(`/addToWishlist/${productId}`).then((response) => {
+    if (response.status) {
+      Toastify({
+        text: `${response.data.message}`,
+        duration: 3000,
+        className: "info",
+        gravity: "bottom",
+        position: "center",
+        style: {
+          background: "linear-gradient(109.6deg, rgba(0, 0, 0, 0.93) 11.2%, rgb(63, 61, 61) 78.9%)",
+        }
+      }).showToast();
 
+      
+    }
+        }).catch((err) => {
+            Toastify({
+                text: "product is not added to wishlis",
+                duration: 3000,
+                className: "info",
+                gravity: "bottom",
+                position: "center",
+                style: {
+                    background: "linear-gradient(109.6deg, rgba(0, 0, 0, 0.93) 11.2%, rgb(63, 61, 61) 78.9%)",
+                }
+            }).showToast();
+        })
+    }
 </script>
 
 {{!-- elevate zoom --}}
