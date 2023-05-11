@@ -1,3 +1,4 @@
+<!--Plugin CSS file with desired skin -->
 <link rel="stylesheet"
     href="https://cdnjs.cloudflare.com/ajax/libs/ion-rangeslider/2.3.1/css/ion.rangeSlider.min.css" />
 
@@ -32,35 +33,20 @@
             </div>
         </div>
     </section>
-    <!-- Page Add Section End -->
+   <!-- Page Add Section End -->
+
+{{!-- pagination --}}
+<input id="totalCount" hidden value="{{totalPages}}">
+<input id="currentPages" hidden value="{{currentPage}}">
 
     <!-- Categories Page Section Begin -->
     <section class="categories-page spad">
         <div class="container">
             <div class="categories-controls">
                 <div class="row">
-                    {{!-- <div class="col-lg-12">
-                        <div class="categories-filter">
-                            <div class="cf-left">
-                                <form action="#">
-                                    <select class="sort">
-                                        <option value="">Sort by</option>
-                                        <option value="">Orders</option>
-                                        <option value="">Newest</option>
-                                        <option value="">Price</option>
-                                    </select>
-                                </form>
-                            </div>
-                            <div class="cf-right">
-                                <span>20 Products</span>
-                                <a href="#">2</a>
-                                <a href="#" class="active">4</a>
-                                <a href="#">6</a>
-                            </div>
-                        </div>
-                    </div> --}}
                      <div class="col-lg-3">
                     <div class="categories-filter">
+                          <!--  price slider -->
                         <div class="col-md-12">
                             <label for="range">Price range:</label>
                             <div class="range-slider">
@@ -136,6 +122,27 @@
                 </div>
             </div>
             {{/each}}
+             {{else if product}}
+            {{#each product}}
+            <div class="col-lg-3 col-md-6">
+                <div class="single-product-item">
+                    <figure>
+                        <img src="{{this.images.[0]}}" alt="">
+                        <div class="p-status">new</div>
+                        <div class="hover-icon">
+                            <a href="{{this.images.[0]}}" class="pop-up"><img src="img/icons/zoom-plus.png" alt=""></a>
+                        </div>
+                    </figure>
+                    <div class="product-text">
+                        <a href="/product/{{this.slug}}">
+                            <h5>{{this.name}}</h5>
+                            <h6>{{this.category}}</h6>
+                            <p>₹{{this.price}}.00</p>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            {{/each}}
             {{else if filteredProducts}}
             {{#each filteredProducts}}
             <div class="col-lg-3 col-md-6">
@@ -181,7 +188,7 @@
             {{/each}}
             {{else}}
 
-            <div id="notfound">
+           <div id="notfound">
                 <div class="notfound">
                     <div class="notfound-404">
                         <h1>Oops!</h1>
@@ -191,12 +198,9 @@
                 </div>
             </div>
             {{/if}}
-
-
-           
-        
            
         </div>
+         {{!-- Pagination --}}
         <div class="col d-flex justify-content-center pagination text-dark">
         </div>
         
@@ -206,6 +210,8 @@
 
 </section>
 
+
+<!-- Your JavaScript code for initializing and updating the range slider Sort price -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/ion-rangeslider/2.3.1/js/ion.rangeSlider.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
@@ -272,5 +278,25 @@
 </script>
 
 
+{{!-- Pagination  --}}
+<script>
+    document.addEventListener("DOMContentLoaded", () =>{
+        const totalCountInput = document.getElementById('totalCount');
+        const totalCount = Number(totalCountInput.value);
 
+        const currentPageInput  = document.getElementById('currentPages');
+        const currentPage = Number(currentPageInput.value);
+        const totalPages = Math.ceil(totalCount/8);
 
+        let page = currentPage || 1;
+        const paginationElement = document.querySelector('.pagination')
+
+        let pageLinks = '';
+        console.log(currentPage);
+        console.log(totalPages);
+        for(let i = 1; i <= totalPages; i++){
+            pageLinks += `<ul style="list-style-type: none;"><li class="page-item${i === page ? ' active' : ''}"><a class="page-link" style="color: black;" href="?page=${i}">${i}</a></li></ul>`;
+        }
+        paginationElement.innerHTML = pageLinks;
+    });
+</script>

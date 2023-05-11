@@ -3,6 +3,18 @@ const collection = require("../config/collection");
 const db = require("../config/connection");
 const objectId = require("mongodb-legacy").ObjectId;
 // const { ObjectId } = require('mongodb');
+const Razorpay = require('razorpay');
+const crypto = require('crypto');
+const { json } = require('body-parser');
+require("dotenv").config();
+
+const razorpay_key_id = process.env.RAZORPAY_KEY_ID;
+const razorpay_key_secret = process.env.RAZORPAY_KEY_SECRET;
+
+var instance = new Razorpay({
+    key_id: razorpay_key_id, 
+    key_secret: razorpay_key_secret,
+   })
 
 module.exports = {
     //User Signup & Login
@@ -357,6 +369,21 @@ module.exports = {
         });
     },
 
+    returnProduct:(orderId) => {
+        return new Promise((resolve, reject) => {
+            db.get().collection(collection.ORDER_COLLECTION).updateOne(
+                {
+                    _id: new objectId(orderId)
+                },
+                {
+                    $set: {
+                        status: "Return"
+                    }
+                }
+            ).then((response) => {resolve(response)})
+        })
+    },
+
 
     //wishlist
     getWishlist: (userId) => {
@@ -402,50 +429,64 @@ module.exports = {
 
     addToWishlist: (userId, productId) => {
         productId = new objectId(productId);
-
+      
         return new Promise(async (resolve, reject) => {
-            const finduser = await db.get().collection(collection.WISHLIST_COLLECTION).findOne(
-                {
-                    userId: new objectId(userId)
-                }
-            )
-
-            let productExist = await db.get().collection(collection.WISHLIST_COLLECTION).findOne(
-                {
-                    userId: new objectId(userId),
-                    product:{$elemMatch:{productId}}
-                }
-            );
-
-            if(finduser){
-                if(!productExist){
-                    db.get().collection(collection.WISHLIST_COLLECTION).updateOne(
-                        {
-                            userId: new objectId(userId)
-                        },
-                        {
-                            $push: {product: {productId}}
-                        }
-                    ).then(()=>{resolve()})
-                    
-                }else{
-                    resolve();
-                }
-
-            }else{
-                db.get().collection(collection.WISHLIST_COLLECTION).insertOne(
-                    {
-                        userId: new objectId(userId),
-                        product: [{productId: productId}],
-                    }
-                ).then((response) => {
-                    resolve(response);
-                }).catch((err) => {
-                    reject(err);
-                })
+          const finduser = await db.get().collection(collection.WISHLIST_COLLECTION).findOne({
+            userId: new objectId(userId)
+          });
+      
+          let productExist = await db.get().collection(collection.WISHLIST_COLLECTION).findOne({
+            userId: new objectId(userId),
+            product: {
+              $elemMatch: {
+                productId
+              }
             }
+          });
+      
+          if (finduser) {
+            if (!productExist) {
+              db.get().collection(collection.WISHLIST_COLLECTION).updateOne({
+                userId: new objectId(userId)
+              }, {
+                $push: {
+                  product: {
+                    productId
+                  }
+                }
+              }).then(() => {
+                resolve("Added to Wishlist");
+              })
+      
+            } else {
+              db.get().collection(collection.WISHLIST_COLLECTION).updateOne({
+                userId: new objectId(userId)
+              }, {
+                $pull: {
+                  product: {
+                    productId
+                  }
+                }
+              }).then(() => {
+                resolve("Product removed from wishlist");
+              })
+            }
+      
+          } else {
+            db.get().collection(collection.WISHLIST_COLLECTION).insertOne({
+              userId: new objectId(userId),
+              product: [{
+                productId: productId
+              }],
+            }).then((response) => {
+              resolve("Added to Wishlist");
+            }).catch((err) => {
+              reject(err);
+            })
+          }
         });
       },
+
 
     deleteWishlist:(userId, productId) => {
         return new Promise((resolve, reject) => {
@@ -462,6 +503,65 @@ module.exports = {
             resolve();
         })
     },
+
+    //Razorpay
+    generateRazorpay:(orderId, total) => {
+        return new Promise ((resolve, reject) => {
+            total = Number(total).toFixed(0);
+            orderId = String(orderId);
+            instance.orders.create({
+                amount: parseInt(total) * 100,
+                currency: "INR",
+                receipt: orderId,
+              },(err, order)=> {
+            if(err){
+                console.log(err);
+                reject(err);
+            }else{
+                console.log("new Order"+order)
+                resolve(order);
+            }
+        })
+
+    })
+
+
+    },
+
+     verifyPayment:(details)=>{
+        return new Promise((resolve, reject)=>{            
+            let hmac = crypto.createHmac('sha256', razorpay_key_secret );
+             
+            hmac.update(details.response.razorpay_order_id + '|' + details.response.razorpay_payment_id);
+            hmac = hmac.digest('hex');
+            console.log( "ok da monu sugam alle", JSON.stringify(details));
+            if(hmac===details.response.razorpay_signature){
+                resolve();
+            }else{
+                reject();
+            }
+        });
+    },
+
+    changeOrderStatus:(orderId) => {
+        return new Promise((resolve, reject) => {
+            db.get().collection(collection.ORDER_COLLECTION).updateOne(
+                {
+                    _id: new objectId(orderId)
+                },
+                {
+                    $set: {
+                        status: "placed"
+                    }
+                }
+            ).then((response) => {
+                resolve(response)
+            }).catch((err) => {
+                
+                console.log(err);
+            })
+        })
+    }
 
 
 };

@@ -14,12 +14,7 @@
                     class="d-flex align-items-center h-custom-2 px-5 ms-xl-4 mt-5 pt-5 pt-xl-0 mt-xl-n5"
                 >
 
-                    <form
-                        style="width: 23rem;"
-                        class="mt-5"
-                        action="/Home"
-                        method="post"
-                    >
+                    <form style="width: 23rem;" class="mt-5" action="/Home" method="post"name="myForm" onsubmit="return validateForm()">
 
                         <h3
                             class="fw-normal mb-3"
@@ -35,6 +30,7 @@
                             />
                             <label class="form-label" for="form2Example18">Email
                                 address</label>
+                                <span id="emailError"class="text-danger error-message"></span>
                         </div>
                         {{#if emailErr}}
                             <label class="text-danger">{{emailErr}}</label>
@@ -51,6 +47,7 @@
                                 class="form-label"
                                 for="form2Example28"
                             >Password</label>
+                            <span id="passwordError"class="text-danger error-message"></span>
                         </div>
                         {{#if passErr}}
                             <label class="text-danger">{{passErr}}</label>
@@ -88,3 +85,42 @@
         </div>
     </div>
 </section>
+
+<script>
+function validateForm() {
+  
+  var email = document.forms["myForm"]["email"].value;
+  var password = document.forms["myForm"]["password"].value;
+  
+  
+  
+  
+  if (email == "") {
+    document.getElementById("emailError").innerHTML = "Please enter your email.";
+    return false;
+  } else {
+    document.getElementById("emailError").innerHTML = "";
+  }
+  
+  if (password == "") {
+    document.getElementById("passwordError").innerHTML = "Please enter your password.";
+    return false;
+  } else {
+    document.getElementById("passwordError").innerHTML = "";
+  }
+ 
+}
+
+// Clear error message when user starts typing in input fields
+
+
+document.getElementById("email").addEventListener("input", function() {
+  document.getElementById("emailError").innerHTML = "";
+});
+
+document.getElementById("password").addEventListener("input", function() {
+  document.getElementById("passwordError").innerHTML = "";
+});
+
+
+</script>

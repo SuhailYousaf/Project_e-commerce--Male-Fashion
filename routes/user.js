@@ -19,13 +19,13 @@ router.get('/signup',verifySession.ifUserLoggedIn, userControllers.signUp);
 
 router.post('/signup', userControllers.signUpPost);
 
-router.get('/otpLoginPage',userControllers.otpLoginPage)
+router.get('/otpLoginPage', userControllers.otpLoginPage)
 
 router.post('/otpLoginPagePost',userControllers.otpLoginPagePost)
 
-router.post('/otpVarificationLogin',userControllers.otpVarificationLogin)
+router.post('/otpVarificationLogin',verifySession.ifUserLoggedIn, userControllers.otpVarificationLogin)
 
-router.get('/forgotPass',userControllers.forgotPass)
+router.get('/forgotPass', userControllers.forgotPass)
 
 router.post ('/forgotPasswordPost',userControllers.forgotPasswordPost)
 
@@ -41,7 +41,7 @@ router.get('/product/:id',verifySession.verifyUserLoggedIn, userControllers.prod
 
 router.get('/category/:name', verifySession.verifyUserLoggedIn, userControllers.categoryFilter);
 
-router.post('/userSearchProduct', verifySession.verifyUserLoggedIn, userControllers.userSearchProduct);
+router.post('/user/userSearchProduct', verifySession.verifyUserLoggedIn, userControllers.userSearchProduct);
 
 
 // otp
@@ -73,10 +73,15 @@ router.get('/deleteAddress/:id' , verifySession.verifyUserLoggedIn, userControll
 
 router.post('/placeOrder', verifySession.verifyUserLoggedIn, userControllers.placeOrder);
 
+router.post('/verifyPayment', verifySession.verifyUserLoggedIn, userControllers.verifyPayment);
+
+
 // User  Orders
 router.get('/orders', verifySession.verifyUserLoggedIn, userControllers.orders);
 
 router.get('/cancelOrder/:id', verifySession.verifyUserLoggedIn, userControllers.cancelOrder);
+
+router.get('/returnOrder/:id', verifySession.verifyUserLoggedIn, userControllers.returnOrder);   
 
 router.get('/orders/viewProduct/:id', verifySession.verifyUserLoggedIn, userControllers.viewDet);
 

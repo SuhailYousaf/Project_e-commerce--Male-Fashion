@@ -49,8 +49,15 @@
                                 <td class="text-center">{{this.category}}</td>
                                 <td class="text-center">{{this.description}}</td>
                                 <td>{{this.price}}</td>
-                                <td><img src="{{this.images.[0]}}" alt="" style="width: 60px; height: 60px;">
+                                <td><img  src="{{this.images.[0]}}" alt="" style="width: 60px; height: 60px;">
                                 </td>
+                               {{!-- <td><button type="button"  data-toggle="modal" data-target="#viewDetails{{this._id}}"><img  src="{{this.images.[0]}}" alt="" style="width: 60px; height: 60px;"></button></td> --}}
+                                 
+                               
+  
+
+
+
                                 <td>{{this.stock}}</td>
                                 <td><a data-toggle="modal" data-target="#edit{{this._id}}"><i
                                             class="fas fa-edit"></i></a></td>
@@ -64,6 +71,10 @@
             </div>
         </div>
     </div>
+
+
+
+
 
     {{!-- Edit products Modal --}}
     {{#each productData}}
@@ -357,3 +368,31 @@
     </div>
 
 {{/if}}
+
+
+
+<script>
+const viewDetailsButtons = document.querySelectorAll('[id^="viewDetails"]');
+
+viewDetailsButtons.forEach(button => {
+    button.addEventListener('click', (event) => {
+        event.preventDefault();
+        const productId = button.id.replace('viewDetails', '');
+        fetch(`/admin/adminViewDetails/${productId}`, {
+            method: 'get',
+        })
+        .then(response => {
+            if (response.ok) {  
+                // replace the following alertify line with your desired action after successful response
+                alertify.success('Details fetched successfully.');
+            } else {
+                alertify.error('Failed to fetch details.');
+            }
+        })
+        .catch(error => {
+            alertify.error('Failed to fetch details.');
+            console.error(error);
+        });
+    });
+});
+</script>
