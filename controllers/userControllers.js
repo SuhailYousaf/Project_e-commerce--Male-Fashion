@@ -5,6 +5,8 @@ const cartHelpers = require("../helpers/cartHelpers");
 const { ObjectId } = require("mongodb");
 const { default: axios } = require("axios");
 const { response } = require("../app");
+const now = new Date();
+
 
 // Twilio-config
 require("dotenv").config();
@@ -616,7 +618,9 @@ placeOrder:async(req,res)=>{
           total:total,
           paymentMethod:paymentMethod,
           products: cartItems,
-          date:new Date().toISOString().slice(0, 19),
+          date: new Date(now.getFullYear(),now.getMonth(),now.getDate(),0,0,0,0),
+          
+          coupon: req.body.coupon,
           status: "placed"
         }
     
@@ -795,6 +799,28 @@ orders: async (req, res) => {
         });
       })
     })
+  },
+
+  couponApply:(req, res)=> {
+    const userId = req.session.user._id;
+    userHelpers.couponApply(req.body.couponCode, userId).then((coupon)=> {
+      if(coupon){
+        if(coupon === 'couponExists'){
+          res.json({
+            status:"coupon is already used, try another coupon"
+          })
+        }else{
+          res.json({
+            status: "success",
+            coupon: coupon
+          })
+        }
+      }else{
+        res.json({
+          status: "coupon is not valid !!"
+        })
+      }
+    });
   },
 
 }
