@@ -21,6 +21,7 @@
                                 <th scope="col">Status</th>
                                 <th scope="col" class="text-center">Image</th>
                                 <th scope="col">Edit Status</th>
+                                <th scope="col">Order Details</th>
                                 {{!-- <th scope="col">View Status</th> --}}
                             </tr>
                         </thead>
@@ -39,10 +40,7 @@
                                 <td> {{#each products}}<img src="{{product.images.[0]}}" alt="" style="width: 60px; height: 60px;" >{{/each}} 
                                 </td>
                                 
-
-                                {{!-- <td><a data-toggle="modal" data-target="#edit{{_id}}"><i
-                                            class="fas fa-edit"></i></a></td> --}}
-                                             <td>
+                                <td>
   <a data-toggle="modal" data-target="#edit{{_id}}">
     <i class="fas fa-edit" >
       <style>
@@ -53,10 +51,8 @@
       </style>
     </i>
   </a>
-           {{!-- <td> <div class="col-md-4 col-sm-12 text-right">
-                         <a href="/admin/viewProducts/{{this._id}}" data-toggle="modal" data-target="#added" class="btn btn-small btn-primary">View Details</a>
-                        <a href="/admin/viewProducts/{{this._id}}" class="btn btn-small btn-primary">View Details</a>
-                    </div></td> --}}
+  </td>
+  <td><a class="btn btn-sm btn-primary" href="/admin/viewProducts/{{this._id}}">Detail</a></td>
 
                             </tr>
 
@@ -74,7 +70,7 @@
                                         <div class="modal-body">
                                             <form class="text-dark" action="/admin/adminOrderStatus/{{_id}}"
                                                 method="post">
-                                                <div class="form-group">
+                                                <dm iv class="form-group">
                                                    {{!-- <select name="" id=""><label for="name" class="col-form-label">Status: 
                                                         <option value="{{this.name}}">{{status}}</option> --}}
                                                         
@@ -141,3 +137,70 @@
         </div>
     </div>
 </div>
+<div class="modal fade" id="view{{_id}}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel" style="color: black;">Edit User</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form class="text-dark">
+                    <div class="card-body p-4">
+                        <div class="d-flex justify-content-between align-items-center mb-4">
+                            <p class="small text-muted mb-0" style="font-size: 1.2em; font-weight: bold;">Order Details of: {{userName}}</p>
+                        </div>
+                        <div class="d-flex justify-content-between align-items-center mb-4">
+                            <p class="lead fw-normal mb-0" style="color: #ffffff;">Receipt</p>
+                            <p class="small text-muted mb-0">Order Id: {{_id}}</p>
+                        </div>
+                        {{#each products}}
+                            <div class="card shadow-0 border mb-4">
+                                <div class="card-body">
+                                    <div class="row">
+                                        <div class="col-md-2">
+                                            <img src="{{this.product.images.[0]}}" class="img-fluid" alt="Phone">
+                                        </div>
+                                        <div class="col-md-2 text-center d-flex justify-content-center align-items-center">
+                                            <p class="text-muted mb-0">{{this.product.name}}</p>
+                                        </div>
+                                        <div class="col-md-2 text-center d-flex justify-content-center align-items-center">
+                                            <p class="text-muted mb-0 small">{{this.product.category}}</p>
+                                        </div>
+                                        <div class="col-md-2 text-center d-flex justify-content-center align-items-center">
+                                            <p class="text-muted mb-0 small">Qty: {{this.quantity}}</p>
+                                        </div>
+                                        <div class="col-md-2 text-center d-flex justify-content-center align-items-center">
+                                            <p class="text-muted mb-0 small">₹{{this.product.price}}</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        {{/each}}
+                    </div>
+                    <hr class="mb-4">
+                    <div class="container">
+                        <div class="d-flex justify-content-between pt-2">
+                            <p class="fw-bold mb-0">Order Details</p>
+                            <p class="text-muted mb-0"><span class="fw-bold me-4">Total</span> ₹{{total}}</p>
+                        </div>
+                        <div class="d-flex justify-content-between pt-2">
+                            <p class="text-muted mb-0">Address Details: {{shippingAddress.address}} <br>
+                                State: {{shippingAddress.state}} <br>
+                                Post Code: {{shippingAddress.postCode}} <br>
+                                Phone Number: {{shippingAddress.phone}}
+                            </p>
+                        </div>
+                        <div class="d-flex justify-content-between pt-2">
+                            <p class="text-muted mb-0">Order Status: {{status}}</p>
+                            <p class="text-muted mb-0">
+
+                    </div>
+                      </div>
+                </form>
+                        </div>
+                          </div>
+                            </div>
+  </div>

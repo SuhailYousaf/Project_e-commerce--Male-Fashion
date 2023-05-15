@@ -41,6 +41,23 @@ getProducts:(currentPage) => {
 },
 
 
+getProductsAdmin:(currentPage) => {
+  return new Promise (async (resolve, reject) => {
+    currentPage = parseInt(currentPage);
+      console.log('currentPage');
+      console.log(currentPage);
+      const limit = 8;
+      const skip = (currentPage-1)*limit;
+      const productData = await db.get().collection(collection.PRODUCT_COLLECTION).find().skip(skip).limit(limit).toArray();
+      // const productData = await db.get().collection(collection.PRODUCT_COLLECTION).find().toArray();
+      if(productData){
+          resolve(productData);
+      }else{
+          resolve("No data to show")
+      }
+  })
+},
+
   getSingleProduct: (slug) => {
     return new Promise (async (resolve, reject) =>{
         const productSingleData = await db.get().collection(collection.PRODUCT_COLLECTION).findOne(
@@ -99,6 +116,24 @@ deleteProducts: (productId) => {
         })
     })
 },
+
+deleteCategoryProducts: (category) => {
+  console.log("delete cheyyaan vannittundeee")
+  return new Promise((resolve, reject) => {
+    db.get().collection(collection.PRODUCT_COLLECTION).deleteMany(
+      { category: category }
+    )
+      .then((response) => {
+        console.log(response);
+        resolve();
+      })
+      .catch((err) => {
+        console.log(err);
+        reject();
+      });
+  });
+},
+
 
 
 //Product Image
@@ -272,7 +307,19 @@ sortPrice:(detailes, category) => {
   totalPages:()=> {
     return new Promise(async (resolve, reject) => {
         const totalCount = await db.get().collection(collection.PRODUCT_COLLECTION).countDocuments({});
+        console.log(totalCount+"totalcoounts inside")
         resolve(totalCount);
+    })
+  },
+
+  totalOrdersPlaced:() => {
+    return new Promise (async (resolve, reject) => {
+        try{
+            const orderPlacedCount = await db.get().collection(collection.ORDER_COLLECTION).countDocuments({});
+            resolve(orderPlacedCount);
+        }catch{
+            resolve(0)
+        }
     })
   },
 

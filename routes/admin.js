@@ -62,6 +62,7 @@ router.post('/adminOrderStatus/:id', verifySession.verifyAdminLoggedIn, adminCon
 
 router.get('/viewProducts/:id',verifySession.verifyAdminLoggedIn,adminControllers.viewDetails);
 
+
 //admin coupon
 router.get('/adminCoupon', verifySession.verifyAdminLoggedIn, adminControllers.adminCoupon);
 
@@ -72,6 +73,13 @@ router.post('/adminAddCoupon', verifySession.verifyAdminLoggedIn, adminControlle
 router.get('/adminDeactivate/:id', verifySession.verifyAdminLoggedIn, adminControllers.adminDeactivate);
 
 router.get('/adminActivate/:id', verifySession.verifyAdminLoggedIn, adminControllers.adminActivate);
+
+//admin salesReport
+router.get('/adminSalesReport', verifySession.verifyAdminLoggedIn, adminControllers.adminSalesReport);
+
+router.get('/adminSalesReportFilter', verifySession.verifyAdminLoggedIn, adminControllers.adminSalesReportFilter);
+
+router.post('/adminSalesReportFilter', verifySession.verifyAdminLoggedIn, adminControllers.adminSalesReportFilterPost);
 
 
 

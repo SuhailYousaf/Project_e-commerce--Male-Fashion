@@ -561,7 +561,31 @@ module.exports = {
                 console.log(err);
             })
         })
+    },
+
+    //coupn
+    couponApply:(couponCode, userId)=>{
+        return new Promise(async(resolve, reject)=>{
+            const couponExists = await db.get().collection(collection.USER_COLLECTION)
+            .findOne(
+                {
+                    _id: new objectId(userId),
+                    usedCoupons: { $elemMatch: { couponCode } }
+                }
+            )
+            const coupon = await db.get().collection(collection.COUPON_COLLECTION).findOne({code: couponCode});
+            if(coupon){
+                if(couponExists){
+                    resolve("couponExists");
+                }else{
+                    resolve(coupon);
+                }
+            }else{
+                resolve(null);
+            }
+        })
     }
+
 
 
 };

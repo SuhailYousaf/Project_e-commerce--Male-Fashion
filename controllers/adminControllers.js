@@ -24,24 +24,20 @@ module.exports = {
     },
 
     adminLoginPost: (req, res) => {
-        adminHelpers.doAdminLogin(req.body).then((response) => {
-            if (response.status == "Invalid password") {
+        adminHelpers.doAdminLogin(req.body).then(async (response) => {
+            if(response.status == "Invalid password"){
                 req.session.passErr = response.status;
-                res.redirect("/admin");
-            } else if (response.status == "Invalid user") {
+                res.redirect('/admin');
+            }else if(response.status == "Invalid user"){
                 req.session.emailErr = response.status;
-                res.redirect("/admin");
-            } else {
+                res.redirect('/admin');
+            }else{
                 req.session.admin = response.admin;
                 req.session.adminName = req.session.admin.email;
                 req.session.adminLoggedIn = true;
-                console.log("adminLoggedin");
-                res.render("admin/adminPanel", {
-                    admin: true,
-                    adminName: req.session.adminName,
-                });
+                res.redirect('/admin/adminPanel')
             }
-        });
+        })
     },
 
     adminLogout: (req, res) => {
@@ -51,11 +47,36 @@ module.exports = {
     },
 
     //Admin Panel
-    adminPanel: (req, res) => {
-        res.render("admin/adminPanel", {
-            admin: true,
-            adminName: req.session.adminName,
-        });
+    // adminPanel: (req, res) => {
+    //     res.render("admin/adminPanel", {
+    //         admin: true,
+    //         adminName: req.session.adminName,
+    //     });
+    // },
+
+    adminPanel: async (req, res) => {
+
+        const jan = await adminHelpers.getMonthCount(1,2023)
+        const feb = await adminHelpers.getMonthCount(2,2023)
+        const mar = await adminHelpers.getMonthCount(3,2023)
+        const apr = await adminHelpers.getMonthCount(4,2023)
+        const may = await adminHelpers.getMonthCount(5,2023)
+        const jun = await adminHelpers.getMonthCount(6,2023)
+        const userCount =await adminHelpers.getUsersCount()
+        const total = await adminHelpers.getLastMonthTotal()
+        console.log("total check")
+        console.log(total)
+        const totalOrdersPlaced = await productHelpers.totalOrdersPlaced()
+        let totalEarnings = 0;
+        totalEarnings = await adminHelpers.getOrderTotalPrice();
+        const deliveredCounts = await adminHelpers.getAllDeliveredOrdersCount();
+        const placedCounts = await adminHelpers.getAllPlacedOrdersCount();
+        const cancelledCounts = await adminHelpers.getAllCanceldOrdersCount();
+        console.log("cancelledCounts")
+        console.log(cancelledCounts)
+        const returnCounts = await adminHelpers.getAllReturnOrdersCount();
+        // const topProducts = await adminHelpers.getTopProduct();
+        res.render('admin/adminPanel', {admin: true, adminName: req.session.adminName, deliveredCounts , placedCounts, cancelledCounts, returnCounts, userCount, totalOrdersPlaced, total, totalEarnings, jan,feb,mar,apr,may,jun});
     },
 
     //Admin User CRUD
@@ -141,11 +162,16 @@ module.exports = {
     //Admin Product CRUD
     adminProduct: async (req, res) => {
         const adminName = req.session.adminName;
-        const productData = await productHelpers.getProducts();
+        //pagination
+        const totalPages = await productHelpers.totalPages();
+        const currentPage = req.query.page || 1;
+
+        const productData = await productHelpers.getProductsAdmin(currentPage);
         res.render("admin/adminProduct", {
             admin: true,
             adminName,
             productData,
+            totalPages
         });
     },
 
@@ -223,9 +249,11 @@ module.exports = {
     adminSearchProduct: async (req, res) => {
         const adminName = req.session.adminName;
         // console.log(req.body.name+"weweweweew");
+        
+
         const product = await adminHelpers.adminSearchProduct(req.body.name);
         // console.log(product+"qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq");
-        res.render("admin/adminProduct", { admin: true, adminName, product });
+        res.render("admin/adminProduct", { admin: true, adminName, product});
     },
     // Admin Category Management
     getCategory: (req, res) => {
@@ -247,6 +275,17 @@ module.exports = {
 
     deleteCategory: (req, res) => {
         const category = req.params.id;
+        const categoryName=req.params.id.name;
+        console.log('category name')
+        console.log(categoryName)
+
+        productHelpers.deleteCategoryProducts(categoryName).then(()=>{
+            console.log(categoryName)
+            console.log("category products deleted")
+        }).catch((err)=>{
+            console.log("err laan vannath")
+            console.log(err)
+        });
         console.log(category);
         categoryHelpers
             .deleteCategory(category)
@@ -275,27 +314,41 @@ module.exports = {
     adminOrderStatus: (req, res) => {
         const orderId = req.params.id;
         console.log(orderId);
-        //    const userId = req.body.userId;
         const status = req.body.status;
+        console.log('status check');
         console.log(status);
-
-        adminHelpers.adminOrderStatus(orderId, status).then(() => {
+      
+        adminHelpers.adminOrderStatus(orderId, status)
+          .then(() => {
             res.redirect("back");
-        });
-    },
+          })
+          .catch((error) => {
+            console.log("Error:", error);
+            res.redirect("back");
+          });
+      },
+
+      
 
     //view Details
 
     viewDetails: async (req, res) => {
+        console.log("inside check viewDetail");
         const adminName = req.session.adminName;
         const orderId = req.params.id;
-        adminHelpers.getOrderedProducts(orderId).then((orders)=>{
-            console.log("orders");
-            console.log(orders);
-            res.render("admin/viewDetails",  {admin: true, adminName: req.session.adminName, orders});
+      
+        adminHelpers.getOrderedProducts(orderId).then((orders) => {
+          console.log("orders");
+          console.log(orders);
+      
+          if (req.session.admin) {
+            res.render("admin/viewDetails", { admin: true, adminName, orders });
+          } else {
+            res.render("user/viewDetails", { admin: false, adminName, orders });
+          }
         });
-    
-    },
+      },
+      
 
    //admin coupon
 adminCoupon: async (req, res)=> {
@@ -336,6 +389,56 @@ adminEditCoupon:(req, res)=> {
     const couponId = req.params.id; 
     adminHelpers.adminEditCoupon(couponId, req.body).then(()=> {
         res.redirect('/admin/adminCoupon')
+    })
+},
+
+//adminSalesReport
+
+adminSalesReport: async (req, res) => {
+    const deliveredOrders = await adminHelpers.getAllDeliveredOrders();
+
+    let totalEarnings = 0;
+    totalEarnings = await adminHelpers.getOrderTotalPrice();
+
+    deliveredOrders.forEach(eachOrder => {
+        eachOrder.productCount = eachOrder.products.length;
+
+        // date formatting
+        const newDate = new Date(eachOrder.date);
+        const year = newDate.getFullYear();
+        const month = newDate.getMonth() + 1;
+        const day = newDate.getDate();
+        const formattedDate = `${day < 10 ? '0' + day : day}-${month < 10 ? '0' + month : month}-${year}`;
+        eachOrder.date = formattedDate;
+    });
+    res.render('admin/adminSalesReport', { admin: true, adminName: req.session.adminName, deliveredOrders, totalEarnings })
+},
+
+adminSalesReportFilter: (req, res) => {
+    req.redirect('/admin/adminSalesReport');
+},
+
+adminSalesReportFilterPost: (req, res) => {
+    adminHelpers.filterDate(req.body.date).then((filteredOrders) => {
+
+        let totalEarnings = 0;
+        if (filteredOrders.length >= 1) {
+            filteredOrders.forEach(eachOrder => {
+                eachOrder.productCount = eachOrder.item.length;
+                totalEarnings += eachOrder.total;
+
+                // date formatting
+                const newDate = new Date(eachOrder.date);
+                const year = newDate.getFullYear();
+                const month = newDate.getMonth() + 1;
+                const day = newDate.getDate();
+                const formattedDate = `${day < 10 ? '0' + day : day}-${month < 10 ? '0' + month : month}-${year}`;
+                eachOrder.date = formattedDate;
+            });
+        } else {
+            filteredOrders = false;
+        }
+        res.render('admin/adminSalesReport', { admin: true, adminName: req.session.adminName, deliveredOrders: filteredOrders, totalEarnings });
     })
 },
   
