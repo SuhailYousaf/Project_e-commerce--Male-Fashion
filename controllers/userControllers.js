@@ -20,8 +20,9 @@ const serviceSid = process.env.TWILIO_SERVICE_SID;
 console.log(accountSid, serviceSid, authToken);
 const client = require("twilio")(accountSid, authToken);
 
-const paypal_client_id = "Acl3ryHDCFyc8xZMeL3oXtSWTPHnJFWQzN0cX6GfmvxuTk4-jFdf6xpbPTepEbGVnodO4ITaxuNCIb9U";
-const paypal_client_secret = "EBXmgl9XgMGeeWHqKUElH36C5x2sxpkt3JTk4O-a-RR3bnruKW3OaOeUj6jk40s73UqD6bRh3y93ZFQA";
+const paypal_client_id = process.env.PAYPAL_CLIENT_ID;
+
+const paypal_client_secret = process.env.PAYPAL_CLIENT_SECRET;
 
 
 paypal.configure({
