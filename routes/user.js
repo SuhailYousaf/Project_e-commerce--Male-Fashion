@@ -3,11 +3,11 @@ var router = express.Router();
 const userControllers = require('../controllers/userControllers');
 const verifySession = require('../middleware/verifySession');
 const userHelpers = require('../helpers/userHelpers');
-
+const multer = require('../utils/multer');
 
 
 // User Home, Login, Signup
-router.get('/', userControllers.userHome);
+router.get('/', verifySession.verifyUserLoggedIn,userControllers.userHome);
 
 router.post('/Home', userControllers.userLoginPost);
 
@@ -15,34 +15,29 @@ router.get('/login', userControllers.userLogin);
 
 router.get('/logout',verifySession.verifyUserLoggedIn, userControllers.logout);
 
-router.get('/signup',verifySession.ifUserLoggedIn, userControllers.signUp);
+router.get('/signup', userControllers.signUp);
 
 router.post('/signup', userControllers.signUpPost);
 
-router.get('/otpLoginPage', userControllers.otpLoginPage)
+router.get('/otpLoginPage',verifySession.ifUserLoggedIn, userControllers.otpLoginPage)
 
-router.post('/otpLoginPagePost',userControllers.otpLoginPagePost)
+router.post('/otpLoginPagePost',verifySession.ifUserLoggedIn,userControllers.otpLoginPagePost)
 
 router.post('/otpVarificationLogin',verifySession.ifUserLoggedIn, userControllers.otpVarificationLogin)
 
-router.get('/forgotPass', userControllers.forgotPass)
+router.get('/forgotPass',verifySession.ifUserLoggedIn, userControllers.forgotPass)
 
-router.post ('/forgotPasswordPost',userControllers.forgotPasswordPost)
+router.post ('/forgotPasswordPost',verifySession.ifUserLoggedIn,userControllers.forgotPasswordPost);
 
-router.post('/forgotPassOTP',userControllers.forgotPassOtpVerificaion)
-
-
-
-
+router.post('/forgotPassOTP',verifySession.ifUserLoggedIn,userControllers.forgotPassOtpVerificaion);
 // User Panel shop page
-router.get('/shop',verifySession.verifyUserLoggedIn, userControllers.shopPage);
+router.get('/shop',verifySession.verifyUserLoggedIn,userControllers.userStatus, userControllers.shopPage);
 
-router.get('/product/:id',verifySession.verifyUserLoggedIn, userControllers.productPage);
+router.get('/product/:id',verifySession.verifyUserLoggedIn,userControllers.userStatus, userControllers.productPage);
 
 router.get('/category/:name', verifySession.verifyUserLoggedIn, userControllers.categoryFilter);
 
 router.post('/user/userSearchProduct', verifySession.verifyUserLoggedIn, userControllers.userSearchProduct);
-
 
 // otp
 router.get('/otpverification',verifySession.ifUserLoggedIn, userControllers.otpPageRender);
@@ -53,14 +48,16 @@ router.get('/forgotPassOTP',verifySession.ifUserLoggedIn, userControllers.forgot
 
 router.post('/forgotPassOtpVerificaion',userControllers.forgotPassOtpVerificaion)
 
+
 // User Cart
-router.get('/cart/',verifySession.verifyUserLoggedIn, userControllers.cart);
+router.get('/cart/',verifySession.verifyUserLoggedIn, userControllers.userStatus,userControllers.cart);
 
 router.get('/addToCart/:id', verifySession.verifyUserLoggedIn, userControllers.cartPage);
 
 router.get('/deleteCart/:id', verifySession.verifyUserLoggedIn, userControllers.deleteCart);
 
 router.post('/change-product-quantity', verifySession.verifyUserLoggedIn, userControllers.changeProductQuantity);
+
 
 // User Checkout
 router.get('/checkOut',verifySession.verifyUserLoggedIn, userControllers.checkOutPage);
@@ -77,16 +74,18 @@ router.post('/verifyPayment', verifySession.verifyUserLoggedIn, userControllers.
 
 
 // User  Orders
-router.get('/orders', verifySession.verifyUserLoggedIn, userControllers.orders);
+router.get('/orders', verifySession.verifyUserLoggedIn,userControllers.userStatus, userControllers.orders);
 
-router.get('/cancelOrder/:id', verifySession.verifyUserLoggedIn, userControllers.cancelOrder);
+router.post('/cancelOrder/:id', verifySession.verifyUserLoggedIn, userControllers.cancelOrder);
 
-router.get('/returnOrder/:id', verifySession.verifyUserLoggedIn, userControllers.returnOrder);   
+router.post('/returnOrder/:id', verifySession.verifyUserLoggedIn, userControllers.returnOrder);
 
 router.get('/orders/viewProduct/:id', verifySession.verifyUserLoggedIn, userControllers.viewDet);
 
+router.post('/setinvoice/:id',verifySession.verifyUserLoggedIn,userControllers.invoicegenerator) 
+
 //Wishlist
-router.get('/wishlist', verifySession.verifyUserLoggedIn, userControllers.wishlist);
+router.get('/wishlist', verifySession.verifyUserLoggedIn,userControllers.userStatus, userControllers.wishlist);
 
 router.get('/addToWishlist/:id', verifySession.verifyUserLoggedIn, userControllers.wishlistPage);
 
@@ -100,13 +99,24 @@ router.post('/shopPriceSort', verifySession.verifyUserLoggedIn, userControllers.
 
 router.post('/couponApply', verifySession.verifyUserLoggedIn, userControllers.couponApply);
 
+//paypal
+
+router.get('/success', verifySession.verifyUserLoggedIn, userControllers.paypalSuccess);
+router.get('/cancel', verifySession.verifyUserLoggedIn, userControllers.failure);
+
+
 
 //UserProfile
-router.get('/userProfile', verifySession.verifyUserLoggedIn, userControllers.userProfile);
+router.get('/userProfile', verifySession.verifyUserLoggedIn,userControllers.userStatus, userControllers.userProfile);
 
 router.post('/userProfilePost', verifySession.verifyUserLoggedIn, userControllers.userProfilePost);
 
 router.get('/userManageAddress', verifySession.verifyUserLoggedIn, userControllers.manageAddress);
+
+router.get('/wallet', verifySession.verifyUserLoggedIn, userControllers.getWallet);
+
+router.post('/uploadProfileImage', multer.single('file'), userControllers.profileImage);
+
 
 
 

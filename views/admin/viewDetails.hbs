@@ -1,10 +1,18 @@
+<style>
+    .gradient-custom {
+    background-color: #000000;
+    background: -webkit-linear-gradient(to top left, #000000, #000000);
+    background: linear-gradient(to top left, #000000, #000000);
+}
+
+     
+</style>
 <div class="container">
-    <div class="row tm-content-row tm-mt-big">
-        <div class="col-xl-12 col-lg-12 tm-md-12 tm-sm-12 tm-block-col">
-             {{!-- <div class="container py-5 h-100"> --}}
-            {{!-- <div class="row d-flex justify-content-center align-items-center h-100"> --}}
-                {{!-- <div class="col-lg-10 col-xl-8"> --}}
-                    <div class="card" style="border-radius: 10px">
+    <section class="h-100 gradient-custom">
+        <div class="container py-5 h-100">
+            <div class="row d-flex justify-content-center align-items-center h-100">
+                <div class="col-lg-10 col-xl-8">
+                    <div class="card" style="border-radius: 10px;">
                         <div class="card-header px-4 py-5" style="background-color: rgb(0, 0, 0);">
                           <h5 class="text-muted mb-0 text-center" style="font-size: 2.2em;">Order Details!</h5>
 
@@ -20,8 +28,6 @@
                             </div>
                             <div class="d-flex justify-content-between align-items-center mb-4">
                                 <p class="lead fw-normal mb-0" style="color: #ffffff;">Receipt</p>
-        
-                                <p class="small text-muted mb-0">Order Id : {{_id}}</p>
                             </div>
                             {{#each products}}
                             <div class="card shadow-0 border mb-4">
@@ -53,20 +59,9 @@
                                         
                                         {{/each}}
                                     </div>
-                                    <hr class="mb-4" <div class="row d-flex align-items-center">
+                                     <div class="row d-flex align-items-center">
                                     <div class="col-md-10">
-                                       {{!-- <div
-                                            class="col-md-2 text-center d-flex justify-content-center align-items-center">
-                                            <p class="text-muted mb-0 small">Address:
-                                               
-                                               address: {{shippingAddress.address}}
-                    
-                                               state: {{shippingAddress.state}}
-                                               postCode: {{shippingAddress.postCode}}
-                                               type: {{shippingAddress.type}}
-                                               phone no: {{shippingAddress.phone}}
-                                            </p>
-                                        </div> --}}
+                                      
                                         <div class="d-flex">
                                             <p class="text-muted mt-1 mb-0 small ms-xl-5">Order Status: {{status}}</p>
                                             {{!-- <p class="text-muted mt-1 mb-0 small ms-xl-5">Delivered</p> --}}
@@ -90,33 +85,41 @@
                                     <br>  Post Code: {{shippingAddress.postCode}}
                                     <br>  Phone Number: {{shippingAddress.phone}}
                                 </p>
+                              
                             
+                            </div>
+                            <div class="d-flex justify-content-between pt-2">
+                               <br>
+                                {{#if coupon.discount}}
+                                <p class="text-muted mb-0"><span class="fw-bold me-4">Coupoun</span>
+                                    ₹{{coupon.discount}}</p>
+                                {{else}}
+                                <p class="text-muted mb-0"><span class="fw-bold me-4">Coupoun</span>
+                                    ₹00.00</p>
+                                {{/if}}
                             </div>
 
                             <div class="d-flex justify-content-between pt-2">
                                 <p class="text-muted mb-0">Order Status : {{status}}</p>
                                 <p class="text-muted mb-0"><span class="fw-bold me-4">Discount</span> ₹00.00</p>
-                            </div>
-
-                            <div class="d-flex justify-content-between mb-5">
-                                <p class="text-muted mb-0">Order Id : {{_id}}</p>
+                            </div>                            
+                          <div class="d-flex justify-content-between mb-5">
+                                {{#each products}}
+                                <p class="text-muted mb-0">Order Id : {{product.productid}}</p>
+                                   {{/each}}
                                 <p class="text-muted mb-0"><span class="fw-bold me-4">Delivery Charges</span> Free</p>
                             </div>
                         </div>
-                        <div class="card-footer border-0 px-4 py-5"
+                    </div>
+                    <div class="card-footer border-0 px-4 py-5"
                         style="background-color: #000000; border-bottom-left-radius: 10px; border-bottom-right-radius: 10px;">
                         <h5 class="d-flex align-items-center justify-content-end text-white text-uppercase mb-0">Total
                             Amount to be paid : <span class="h2 mb-0 ms-2">₹{{total}}</span></h5>
                     </div>
-                        
-                    </div>
-                    
                 </div>
-            {{!-- </div> --}}
-        {{!-- </div> --}}
-        {{/each}}
-{{!-- </div> --}}
-               
             </div>
-        </div>
-    </div>
+        </div>        
+        {{/each}}     
+</div>
+</section>
+</div>

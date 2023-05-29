@@ -1,3 +1,15 @@
+const db = require("../config/connection");
+const bcrypt = require("bcrypt");
+const collection = require("../config/collection");
+// const db = require("../config/connection");
+const objectId = require("mongodb-legacy").ObjectId;
+// const { ObjectId } = require('mongodb');
+const Razorpay = require('razorpay');
+const crypto = require('crypto');
+const { json } = require('body-parser');
+require("dotenv").config();
+
+
 module.exports = {
     verifyAdminLoggedIn : (req, res, next) => {
         if(req.session.adminLoggedIn){
@@ -19,6 +31,7 @@ module.exports = {
         if(req.session.userLoggedIn){
             next();
         }else{
+            
             res.redirect('/login');
         }
     },
@@ -29,7 +42,11 @@ module.exports = {
         }else{
             next();
         }
-    }
+    },
+
+
+    
+      
 
 
 

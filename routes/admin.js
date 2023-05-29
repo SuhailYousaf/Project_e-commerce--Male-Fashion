@@ -4,6 +4,7 @@ const adminControllers = require('../controllers/adminControllers');
 const upload = require('../utils/multer');
 const userControllers = require('../controllers/userControllers');
 const verifySession = require('../middleware/verifySession');
+const multer = require('../utils/multer');
 
 
 router.get('/', verifySession.ifAdminLoggedIn, adminControllers.adminLogin);
@@ -13,7 +14,7 @@ router.get('/AdminLogout', verifySession.verifyAdminLoggedIn, adminControllers.a
 // Admin Panel
 router.get('/adminPanel', verifySession.verifyAdminLoggedIn, adminControllers.adminPanel);
 
-router.post('/adminPanel', adminControllers.adminLoginPost);
+router.post('/adminPanel', adminControllers.adminLoginPost); 
 
 
 // Admin Users
@@ -50,12 +51,17 @@ router.get('/adminCategory', verifySession.verifyAdminLoggedIn, adminControllers
 
 router.post('/adminCategory', adminControllers.addCategory);
 
-router.get('/adminDeleteCategory/:id', adminControllers.deleteCategory);
+router.get('/adminDeleteCategory/:id/:name', adminControllers.deleteCategory);
 
 // Admin Order
 router.get('/adminOrder', verifySession.verifyAdminLoggedIn, adminControllers.adminOrder);
 
 router.post('/adminOrderStatus/:id', verifySession.verifyAdminLoggedIn, adminControllers.adminOrderStatus);
+
+router.get('/adminOrdersView/:id', verifySession.verifyAdminLoggedIn, adminControllers.adminOrderView);
+
+router.post('/adminRefund/:id', verifySession.verifyAdminLoggedIn, adminControllers.adminRefund);
+
 
 
 //view details
@@ -68,7 +74,7 @@ router.get('/adminCoupon', verifySession.verifyAdminLoggedIn, adminControllers.a
 
 router.post('/adminAddCoupon', verifySession.verifyAdminLoggedIn, adminControllers.adminAddCoupon);
 
-// router.post('/adminEditCoupon/:id', verifySession.verifyAdminLoggedIn, adminControllers.adminEditCoupon);
+router.post('/adminEditCoupon/:id', verifySession.verifyAdminLoggedIn, adminControllers.adminEditCoupon);
 
 router.get('/adminDeactivate/:id', verifySession.verifyAdminLoggedIn, adminControllers.adminDeactivate);
 
@@ -80,6 +86,15 @@ router.get('/adminSalesReport', verifySession.verifyAdminLoggedIn, adminControll
 router.get('/adminSalesReportFilter', verifySession.verifyAdminLoggedIn, adminControllers.adminSalesReportFilter);
 
 router.post('/adminSalesReportFilter', verifySession.verifyAdminLoggedIn, adminControllers.adminSalesReportFilterPost);
+
+// Admin Banner
+router.get('/adminBanner', verifySession.verifyAdminLoggedIn, adminControllers.adminBanner);
+
+router.post('/adminAddBanner', verifySession.verifyAdminLoggedIn, multer.single("image", 1), adminControllers.adminAddBanner);
+
+router.post('/adminEditBanner/:id', verifySession.verifyAdminLoggedIn, multer.single("image", 1), adminControllers.adminEditBanner);
+
+router.get('/adminActivateBanner/:id', verifySession.verifyAdminLoggedIn, adminControllers.adminActivateBanner);
 
 
 

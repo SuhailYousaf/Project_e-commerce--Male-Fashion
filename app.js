@@ -4,17 +4,22 @@ const path = require('path');
 const cookieParser = require('cookie-parser');
 const logger = require('morgan');
 const session = require('express-session');
-
-const hbs = require('express-handlebars');
-
 const userRouter = require('./routes/user');
 const adminRouter = require('./routes/admin');
 const db = require('./config/connection');
+const mathHelpers = require('./helpers/mathHelpers');
+const hbs = require('express-handlebars');
+const handlebars = require('handlebars');
+
+
 // const slugify = require('slugify');
 require('dotenv').config();
+const nocache = require('nocache');
 
-
+handlebars.registerHelper(mathHelpers);
 const app = express();
+
+app.use(nocache());
 
 app.use(session({
   secret: 'your secret key',
@@ -49,6 +54,14 @@ app.use('/admin', adminRouter);
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
   next(createError(404));
+});
+app.use(function(err, req, res, next) {
+  if (err.status === 404) {
+    res.status(404).send('Not Found');
+  } else {
+    // Handle other errors
+    // ...
+  }
 });
 
 // error handler

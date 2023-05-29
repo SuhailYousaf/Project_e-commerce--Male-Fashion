@@ -37,6 +37,7 @@
                             <label class="form-label" for="form2Example18">
                                 Enter OTP</label>
                         </div>
+                        <div id="countdown"></div>
                         {{#if errMsg}}
                   <label class="text-danger">{{errMsg}}</label>
                   {{/if}}
@@ -62,3 +63,18 @@
         </div>
     </div>
 </section>
+
+<script>
+    var timeleft = 59;
+  var downloadTimer = setInterval(function(){
+    if(timeleft <= 0){
+      clearInterval(downloadTimer);
+      document.getElementById("countdown").innerHTML = "Time is Over";
+      window.location.href = '/otpLoginPage'; 
+    } else {
+      document.getElementById("countdown").innerHTML = timeleft + " seconds remaining";
+    }
+    timeleft -= 1;
+  }, 1000);
+ 
+  </script>
