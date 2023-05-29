@@ -70,17 +70,16 @@
                             </div>
                         </div>
                          <div class="cf-left mt-3">
-                                    {{!-- <select class="sort"> --}}
-                                        {{!-- <option value="" >Sort by</option> --}}
-                                        <a href="" class="btn btn-dark" onclick="sortPrice(1)">Low to High</a>
-                                        <a href="" class="btn btn-dark" onclick="sortPrice(-1)">High to Low</a>
-                                    
-                               
-                                        {{!-- <option value="" onclick="sortPrice(1)">Low to High</option>
-                                        <option value="" onclick="sortPrice(-1)">High to Low</option> --}}
-                                    {{!-- </select> --}}
+
+                                        {{!-- <a href="" class="btn btn-dark" onclick="sortPrice(1)">Low to High</a>
+                                        <a href="" class="btn btn-dark" onclick="sortPrice(-1)">High to Low</a> --}}
+<select class="sort" onchange="sortPrice(this.value)">
+                                <option value="">Sort by</option>
+                                <option value="1">Low to High</option>
+                                <option value="-1">High to Low</option>
+                            </select>
+
                             </div>
-                            
                     </div>
                 </div>
 <div class="main">
@@ -223,8 +222,8 @@
 
     // initialize range slider
     let instance = null;
-    const min = 500;
-    const max = 3000;
+    const min = 300;
+    const max = 5000;
     const defaultMin = min;
     const defaultMax = max;
     range.value = `${defaultMin},${defaultMax}`;

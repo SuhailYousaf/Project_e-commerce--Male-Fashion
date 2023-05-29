@@ -11,7 +11,7 @@
                 <div class="table-responsive">
                     <div class="bg-secondary rounded h-100 p-4">
                     <!-- orders.hbs -->
-                    <table class="table table-hover table-striped tm-table-striped-even mt-3">
+                    <table class="table table-hover table-striped tm-table-striped-even mt-3" id="productsTable">
                         <thead>
                             <tr class="tm-bg-gray">
                                 <th scope="col">Product Name</th>
@@ -27,10 +27,11 @@
                         </thead>
                         <tbody>
                             
+                            
                             {{#each adminOrder}}
                             
                             <tr>
-                                <td class="tm-product-name"> {{#each products}}{{product.name}} <br> {{/each}}</td>
+                                <td class="tm-product-name"> <a href="/admin/adminOrdersView/{{this._id}}">{{#each products}}{{product.name}} <br> {{/each}}</a></td>
                                 <td class="text-center">{{userName}}</td>
                                 <td class="text-center">{{shippingAddress.phone}}</td>
                                 
@@ -41,20 +42,19 @@
                                 </td>
                                 
                                 <td>
-  <a data-toggle="modal" data-target="#edit{{_id}}">
-    <i class="fas fa-edit" >
-      <style>
-        .fa-edit:hover {
-          color: white;
-          cursor: pointer;
-        }
-      </style>
-    </i>
-  </a>
-  </td>
-  <td><a class="btn btn-sm btn-primary" href="/admin/viewProducts/{{this._id}}">Detail</a></td>
-
-                            </tr>
+                                    <a data-toggle="modal" data-target="#edit{{_id}}">
+                                      <i class="fas fa-edit" >
+                                     <style>
+                                       .fa-edit:hover {
+                                         color: white;
+                                           cursor: pointer;
+                                              }
+                                           </style>
+                                           </i>
+                                            </a>
+                                            </td>
+                                             <td><a class="btn btn-sm btn-primary" href="/admin/viewProducts/{{this._id}}">Detail</a></td>
+                                </tr>
 
                             {{!-- Edit order Modal --}}
                             <div class="modal fade" id="edit{{_id}}" tabindex="-1" role="dialog"
@@ -204,3 +204,15 @@
                           </div>
                             </div>
   </div>
+
+{{!-- pagination --}}
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/ion-rangeslider/2.3.1/js/ion.rangeSlider.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
+
+<script>
+     $(function () {
+    $('#productsTable').DataTable();
+  });
+</script>

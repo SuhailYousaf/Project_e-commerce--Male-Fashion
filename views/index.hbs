@@ -1,6 +1,6 @@
 <!-- Lookbok Section Begin -->
 <!-- Header Info Begin -->
-<div class="header-info">
+{{!-- <div class="header-info">
     <div class="container-fluid">
         <div class="row">
             <div class="col-md-4">
@@ -23,47 +23,42 @@
             </div>
         </div>
     </div>
+</div> --}}
+
+<div class="header-info">
+        <div class="row">
+            {{#each coupons}}
+            {{#if this.deactivate}}
+            {{else if this.expired}}
+            {{else}}
+            <div class="col-12 text-left text-lg-center">
+                <div class="header-item d-flex align-items-center justify-content-center">
+                    <img src="img/icons/voucher.png" alt="">
+                    <p>Coupon Code: {{code}} ({{discount}} Discount)</p>
+                </div>
+            </div>
+            {{/if}}
+            {{/each}}
+        </div>
 </div>
 <!-- Header Info End -->
-<!-- Header End -->
+<!-- Header End --
 
 <!-- Hero Slider Begin -->
 <section class="hero-slider">
     <div class="hero-items owl-carousel">
-        <div class="single-slider-item set-bg" data-setbg="https://images.unsplash.com/photo-1544441893-675973e31985?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1470&q=80">
+        <div class="single-slider-item set-bg" data-setbg="{{banner.image}}">
             <div class="container">
                 <div class="row">
                     <div class="col-lg-12">
                         <h1>2023</h1>
-                        <h2>Lookbook.</h2>
+                        {{!-- <h2>Fasion World</h2> --}}
+                         <h2>{{banner.heading}}.</h2>
                         <a href="/shop" class="primary-btn">See Products</a>
                     </div>
                 </div>
             </div>
         </div>
-        <div class="single-slider-item set-bg" data-setbg="img/slider-2.jpg">
-            <div class="container">
-                <div class="row">
-                    <div class="col-lg-12">
-                        <h1>2023</h1>
-                        <h2>Lookbook.</h2>
-                        <a href="#" class="primary-btn">See More</a>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="single-slider-item set-bg" data-setbg="img/slider-2.jpg">
-            <div class="container">
-                <div class="row">
-                    <div class="col-lg-12">
-                        <h1>2023</h1>
-                        <h2>Lookbook.</h2>
-                        <a href="#" class="primary-btn">See More</a>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
 </section>
 <!-- Hero Slider End -->
 
@@ -108,7 +103,7 @@
                     <div class="row">
                         <div class="col-lg-12">
                             <div class="single-box-item first-box">
-                                <img src="https://images.unsplash.com/photo-1552374196-1ab2a1c593e8?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxzZWFyY2h8MTR8fG1lbnN8ZW58MHx8MHx8&auto=format&fit=crop&w=500&q=60" alt="">
+                                <img src="https://images.unsplash.com/photo-1534809027769-b00d750a6bac?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1yZWxhdGVkfDd8fHxlbnwwfHx8fHw%3D&auto=format&fit=crop&w=500&q=60" alt="">
                                 {{!-- <div style="margin-top: 300px; margin-right: 100px;" class="box-text">
                                     <a href="#" class="primary-btn text-white">See More</a>
                                 </div> --}}
@@ -128,7 +123,7 @@
                 </div>
                 <div class="col-lg-6">
                     <div class="single-box-item large-box">
-                        <img src="https://images.unsplash.com/photo-1603252109303-2751441dd157?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxzZWFyY2h8M3x8bWVuJTIwZHJlc3N8ZW58MHx8MHx8&auto=format&fit=crop&w=500&q=60" alt="">
+                        <img src="https://images.unsplash.com/photo-1583949867843-ec3cfe5a4bcd?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxjb2xsZWN0aW9uLXBhZ2V8OHwzODcxODE1fHxlbnwwfHx8fHw%3D&auto=format&fit=crop&w=500&q=60" alt="">
                         <div class="box-text">
                             <span class="trend-year">2023 Party</span>
                             <h2>Collection</h2>
@@ -151,65 +146,30 @@
                     <div class="section-title">
                         <h2>Latest Products</h2>
                     </div>
-                    <ul class="product-controls">
-                        <li data-filter="*">All</li>
-                        <li data-filter=".dresses">Dresses</li>
-                        <li data-filter=".bags">Bags</li>
-                        <li data-filter=".shoes">Shoes</li>
-                        <li data-filter=".accesories">Accesories</li>
-                    </ul>
+                    
                 </div>
             </div>
         </div>
-        <div class="row" id="product-list">
-            <div class="col-lg-3 col-sm-6 mix all accesories bags">
+        
+         <div class="container">
+        <div class="row">
+            {{#each products}}
+            <div class="col-lg-3 col-md-6">
                 <div class="single-product-item">
                     <figure>
-                        <a href="#"><img src="https://images.unsplash.com/photo-1496346236646-50e985b31ea4?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=387&q=80" alt=""></a>
-                        <div class="p-status popular">popular</div>
+                        <img src="{{this.images.[0]}}" alt="">
+                        <div class="p-status">new</div>
                     </figure>
                     <div class="product-text">
-                        <h6>Blue Dress with details</h6>
-                        <p>$35.50</p>
+                        <a href="/product/{{this._id}}">
+                            <h5>{{name}}</h5>
+                            <h6>{{category}}</h6>
+                            <p>₹{{price}}.00</p>
+                        </a>
                     </div>
                 </div>
             </div>
-            <div class="col-lg-3 col-sm-6 mix all accesories bags">
-                <div class="single-product-item">
-                    <figure>
-                        <a href="#"><img src="https://images.unsplash.com/photo-1586057708062-6ebbd38c2caa?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxzZWFyY2h8MTUwfHxtZW4lMjBkcmVzc3xlbnwwfHwwfHw%3D&auto=format&fit=crop&w=500&q=60" alt=""></a>
-                        <div class="p-status popular">popular</div>
-                    </figure>
-                    <div class="product-text">
-                        <h6>Blue Dress with details</h6>
-                        <p>$35.50</p>
-                    </div>
-                </div>
-            </div>
-            <div class="col-lg-3 col-sm-6 mix all accesories bags">
-                <div class="single-product-item">
-                    <figure>
-                        <a href="#"><img src="https://images.unsplash.com/photo-1549068294-04a001ee0638?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxzZWFyY2h8MTcxfHxtZW4lMjBkcmVzc3xlbnwwfHwwfHw%3D&auto=format&fit=crop&w=500&q=60" alt=""></a>
-                        <div class="p-status popular">popular</div>
-                    </figure>
-                    <div class="product-text">
-                        <h6>Blue Dress with details</h6>
-                        <p>$35.50</p>
-                    </div>
-                </div>
-            </div>
-            <div class="col-lg-3 col-sm-6 mix all accesories bags">
-                <div class="single-product-item">
-                    <figure>
-                        <a href="#"><img src="https://images.unsplash.com/photo-1588313586202-b3773996d1ed?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxzZWFyY2h8MjkzfHxtZW4lMjBkcmVzc3xlbnwwfHwwfHw%3D&auto=format&fit=crop&w=500&q=60" alt=""></a>
-                        <div class="p-status popular">popular</div>
-                    </figure>
-                    <div class="product-text">
-                        <h6>Blue Dress with details</h6>
-                        <p>$35.50</p>
-                    </div>
-                </div>
-            </div>
+            {{/each}}
         </div>
     </div>
 </section>

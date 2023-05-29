@@ -2,15 +2,13 @@ const bcrypt = require("bcrypt");
 const collection = require("../config/collection");
 const db = require("../config/connection");
 const objectId = require("mongodb-legacy").ObjectId;
-// const { ObjectId } = require('mongodb');
 const Razorpay = require('razorpay');
 const crypto = require('crypto');
 const { json } = require('body-parser');
 require("dotenv").config();
-
+//razorpay
 const razorpay_key_id = process.env.RAZORPAY_KEY_ID;
 const razorpay_key_secret = process.env.RAZORPAY_KEY_SECRET;
-
 var instance = new Razorpay({
     key_id: razorpay_key_id, 
     key_secret: razorpay_key_secret,
@@ -30,8 +28,7 @@ module.exports = {
                 db.get()
                     .collection(collection.USER_COLLECTION)
                     .insertOne(userData)
-                    .then((response) => {
-                        console.log(response);
+                    .then((response) => {                 
                         resolve(response);
                     })
                     .catch((err) => {
@@ -42,6 +39,20 @@ module.exports = {
                 resolve("Email already exist!!!");
             }
         });
+    },
+    getCartCount: (userId) => {
+      return new Promise(async (resolve, reject) => {
+        user=userId;
+        let count = 0;
+        let cart = await db
+                .get()
+                .collection(collection.CART_COLLECTION)
+                .findOne({ userId: new objectId(user) }); 
+    if (cart) {
+              count = cart.product.length;  // Change 'products' to 'product'
+            }
+        resolve (count)
+      });
     },
 
     doLogin: (userData) => {
@@ -84,7 +95,6 @@ module.exports = {
             .get()
             .collection(collection.USER_COLLECTION)
             .findOne({ phone: mob })
-            console.log(mobExist);
             let response={}
           if (mobExist) {
             if (mobExist.status === false) {
@@ -106,12 +116,9 @@ module.exports = {
             .findOne({ phone: mob })
             .then((response) => { resolve(response) })
         })
-      },
-
-      
+      },   
 // User Profile
     editProfile: (userId, info) => {
-        console.log(userId)
         return new Promise ((resolve, reject) => {
             db.get().collection(collection.USER_COLLECTION).updateOne(
                 
@@ -126,13 +133,10 @@ module.exports = {
                     }
                 }
             ).then((response) => {
-                console.log("response")
-                console.log(response.name)
                 resolve(response);
             })
         })
     },
-
     editPassword: (userId, info) => {
         return new Promise( async (resolve, reject) => {
             const user = db.get().collection(collection.USER_COLLECTION).findOne({
@@ -141,7 +145,46 @@ module.exports = {
             resolve(user);
         })
     },
+    getWallet: (userId) => {
+      return new Promise(async (resolve, reject) => {
+        try {
+          const wallet = await db.get().collection(collection.WALLET_COLLECTION).findOne({ _id: new objectId(userId) });
+          resolve(wallet);
+        } catch (error) {
+          reject(error);
+        }
+      });
+    },
+    
+    profileImage: (userId, imageUrl) => {
+      return new Promise((resolve, reject) => {
+        db.get()
+          .collection(collection.USER_COLLECTION)
+          .updateOne(
+            { _id: new objectId(userId) },
+            { $set: { image: imageUrl } }
+          )
+          .then(() => {
+            resolve();
+          })
+          .catch((error) => {
+            reject(error);
+          });
+      });
+  },
 
+  getUser:(userId)=> {
+
+    return new Promise(async (resolve, reject) => {
+
+        const user = await db.get().collection(collection.USER_COLLECTION).findOne(
+            {
+                _id: new objectId(userId)
+            }
+        )
+        resolve(user);
+    })
+},
     //   ===========forgotPass===============
   checkuserBlockExist:(email)=>{
     let response={}
@@ -153,7 +196,6 @@ module.exports = {
           response.status = "User Blocked";
           resolve(response);
         }
-        console.log("insidephone");
         response.phone=user.phone
 
         resolve(response)
@@ -179,7 +221,6 @@ module.exports = {
     })
   },
 //   ====================forgotEnd=========================
-
     //Address
     getAddress: (userId) => {
         return new Promise(async (resolve, reject) => {
@@ -203,7 +244,6 @@ module.exports = {
             address.phone = Number(address.phone);
             address.postCode = Number(address.postCode);
             userId = new objectId(userId);
-            // Object.assign(address, {id:uuidv4()})
             address._id = new objectId();
             db.get()
                 .collection(collection.USER_COLLECTION)
@@ -274,7 +314,6 @@ module.exports = {
             resolve(address[0].address);
         });
     },
-
     // Orders
     getOrders: (userId) => {
         return new Promise(async (resolve, reject) => {
@@ -285,91 +324,116 @@ module.exports = {
                 .find({ userId: userId })
                 .sort({ date: -1 })
                 .toArray();
-            console.log(orders + "qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq");
             resolve(orders);
         });
     },
-
-    addOrderDetails: (order) => {
-        // Object.assign(order, {status: "pending"});
-        return new Promise((resolve, reject) => {
-            db.get()
-                .collection(collection.ORDER_COLLECTION)
-                .insertOne(order)
-                .then((response) => {
-                    console.log(response);
-                    resolve(response);
+    addOrderDetails: (order, userId) => {
+        return new Promise(async (resolve, reject) => {
+          if (order.coupon != 'undefined') {
+            const couponCode = order.coupon;
+            const coupon = await db.get().collection(collection.COUPON_COLLECTION).findOne({
+              code: order.coupon
+            });
+            order.coupon = coupon;
+            try {
+              const couponExist = await db.get().collection(collection.USER_COLLECTION).findOne(
+                {
+                  _id: new objectId(userId),
+                  usedCoupons: { $elemMatch: { couponCode } },
+                },
+              )
+              if (!couponExist) {
+                db.get().collection(collection.USER_COLLECTION).updateOne(
+                  {
+                    _id: new objectId(userId)
+                  },
+                  {
+                    $push: {
+                      usedCoupons: { couponCode }
+                    }
+                  }
+                )
+              }
+            } catch (err) {
+              console.log(err)
+            } finally {
+    
+              db.get().collection(collection.ORDER_COLLECTION).insertOne(order)
+                .then(async (response) => {
+                  resolve(response);
+                  for (let i = 0; i < order.item.length; i++) {
+    
+                    const stock = await db.get().collection(collection.PRODUCT_COLLECTION).updateOne(
+                      {
+                        _id: order.item[i].product._id
+                      },
+                      {
+                        $inc: {
+                          stock: -order.item[i].quantity
+                        }
+                      }
+                    )
+                  }
                 })
-                .catch(() => {
-                    reject();
-                });
-        });
-    },
-
+                .catch((err) => {
+                  reject(err);
+                })
+            }
+          } else {
+            delete order.coupon
+    
+            db.get().collection(collection.ORDER_COLLECTION).insertOne(order)
+              .then(async (response) => {
+                resolve(response);
+                for (let i = 0; i < order.item.length; i++) {
+                  const stock = await db.get().collection(collection.PRODUCT_COLLECTION).updateOne(
+                    {
+                      _id: order.item[i].product._id
+                    },
+                    {
+                      $inc: {
+                        stock: -order.item[i].quantity
+                      }
+                    }
+                  )
+                }
+              })
+              .catch((err) => {
+                reject(err);
+              })
+          }
+    
+        })
+      },
     getOrderedProducts: (ordersId) => {
         return new Promise(async (resolve, reject) => {
             ordersId = new objectId(ordersId);
-            console.log("ordersId");
-            console.log(ordersId);
             const orders = await db
                 .get()
                 .collection(collection.ORDER_COLLECTION)
                 .find({ _id: ordersId })
                 .toArray();
-            //                 {
-            //                   '$match': {
-            //                     '_id': ordersId
-            //                   }
-            //                 }, {
-            //                   '$unwind': {
-            //                     'path': '$products',
-            //                     'includeArrayIndex': 'string',
-            //                     'preserveNullAndEmptyArrays': true
-            //                   }
-            //                 }, {
-            //                   '$lookup': {
-            //                     'from': 'product',
-            //                     'localField': 'product.productId',
-            //                     'foreignField': '_id',
-            //                     'as': 'productDetails'
-            //                   }
-            //                 }, {
-            //                   '$project': {
-            //                     'productDetails': 1,
-            //                     '_id': 0,
-            //                     'products.quantity' : 1
-            //                   }
-            //                 }
-            //             ]).toArray();
-            // console.log(orders);
-            // console.log(orders[0].productDetails);
             console.log(orders);
             resolve(orders);
         });
+    }, 
+    cancelOrder:(orderId, reason)=>{
+        return new Promise((resolve,reject)=>{
+          db.get().collection(collection.ORDER_COLLECTION)
+          .updateOne({
+            _id: new objectId(orderId),
+            
+          },
+          {
+            $set: {
+              "status": "Cancelled",
+              "cancel": reason
+              }
+          })
+          .then((response)=>{resolve(response)})
+        })
     },
-
-    cancelOrder: (orderId) => {
-        return new Promise((resolve, reject) => {
-            if (!objectId.isValid(orderId)) {
-                reject(new Error("Invalid order ID"));
-                return;
-            }
-            db.get()
-                .collection(collection.ORDER_COLLECTION)
-                .updateOne(
-                    { _id: new objectId(orderId) },
-                    { $set: { status: "Cancelled" } }
-                )
-                .then((response) => {
-                    resolve(response);
-                })
-                .catch((error) => {
-                    reject(error);
-                });
-        });
-    },
-
-    returnProduct:(orderId) => {
+    returnProduct:(orderId, reason) => {
         return new Promise((resolve, reject) => {
             db.get().collection(collection.ORDER_COLLECTION).updateOne(
                 {
@@ -377,14 +441,22 @@ module.exports = {
                 },
                 {
                     $set: {
-                        status: "Return"
+                        status: "Return",
+                        return: reason,
                     }
                 }
             ).then((response) => {resolve(response)})
         })
     },
 
+  getSingleorder: (orderId) => {
+    return new Promise((resolve, reject) => {
+        db.get().collection(collection.ORDER_COLLECTION).findOne({ _id: new objectId(orderId) }).then((orderdata) => {
+            resolve(orderdata)
+        })
+    })
 
+},
     //wishlist
     getWishlist: (userId) => {
         return new Promise(async (resolve, reject) => {
@@ -426,15 +498,12 @@ module.exports = {
             }
         })
     },
-
     addToWishlist: (userId, productId) => {
         productId = new objectId(productId);
-      
         return new Promise(async (resolve, reject) => {
           const finduser = await db.get().collection(collection.WISHLIST_COLLECTION).findOne({
             userId: new objectId(userId)
           });
-      
           let productExist = await db.get().collection(collection.WISHLIST_COLLECTION).findOne({
             userId: new objectId(userId),
             product: {
@@ -443,7 +512,6 @@ module.exports = {
               }
             }
           });
-      
           if (finduser) {
             if (!productExist) {
               db.get().collection(collection.WISHLIST_COLLECTION).updateOne({
@@ -457,7 +525,6 @@ module.exports = {
               }).then(() => {
                 resolve("Added to Wishlist");
               })
-      
             } else {
               db.get().collection(collection.WISHLIST_COLLECTION).updateOne({
                 userId: new objectId(userId)
@@ -486,8 +553,6 @@ module.exports = {
           }
         });
       },
-
-
     deleteWishlist:(userId, productId) => {
         return new Promise((resolve, reject) => {
             db.get().collection(collection.WISHLIST_COLLECTION).updateOne(
@@ -503,7 +568,6 @@ module.exports = {
             resolve();
         })
     },
-
     //Razorpay
     generateRazorpay:(orderId, total) => {
         return new Promise ((resolve, reject) => {
@@ -515,23 +579,17 @@ module.exports = {
                 receipt: orderId,
               },(err, order)=> {
             if(err){
-                console.log(err);
                 reject(err);
             }else{
-                console.log("new Order"+order)
                 resolve(order);
             }
         })
 
     })
-
-
     },
-
      verifyPayment:(details)=>{
         return new Promise((resolve, reject)=>{            
-            let hmac = crypto.createHmac('sha256', razorpay_key_secret );
-             
+            let hmac = crypto.createHmac('sha256', razorpay_key_secret );            
             hmac.update(details.response.razorpay_order_id + '|' + details.response.razorpay_payment_id);
             hmac = hmac.digest('hex');
             console.log( "ok da monu sugam alle", JSON.stringify(details));
@@ -542,7 +600,6 @@ module.exports = {
             }
         });
     },
-
     changeOrderStatus:(orderId) => {
         return new Promise((resolve, reject) => {
             db.get().collection(collection.ORDER_COLLECTION).updateOne(
@@ -556,12 +613,29 @@ module.exports = {
                 }
             ).then((response) => {
                 resolve(response)
-            }).catch((err) => {
-                
-                console.log(err);
+            }).catch((err) => {               
             })
         })
     },
+    changeOrderPaymentStatus:(orderId) => {
+      return new Promise((resolve, reject) => {
+          db.get().collection(collection.ORDER_COLLECTION).updateOne(
+              {
+                  _id: new objectId(orderId)
+              },
+              {
+                  $set: {
+                      status: "failed"
+                  }
+              }
+          ).then((response) => {
+              resolve(response)
+          }).catch((err) => {
+              
+              console.log(err);
+          })
+      })
+  },
 
     //coupn
     couponApply:(couponCode, userId)=>{
@@ -584,8 +658,25 @@ module.exports = {
                 resolve(null);
             }
         })
-    }
+    },
 
+    getCoupon:()=> {
+      return new Promise(async (resolve, reject)=> {
+         const coupon  = db.get().collection(collection.COUPON_COLLECTION).find().toArray();
+          resolve(coupon);
+      })
+  },
 
-
+    // Banner
+getActiveBanner:()=> {
+    return new Promise((resolve, reject)=> {
+  
+        const activeBanner = db.get().collection(collection.BANNER_COLLECTION).findOne(
+            {
+                active: true
+            }
+        )
+        resolve(activeBanner);
+    })
+  }
 };
