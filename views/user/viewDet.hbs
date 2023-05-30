@@ -2,10 +2,8 @@
     .gradient-custom {
         /* fallback for old browsers */
         background: #ffffff;
-
         /* Chrome 10-25, Safari 5.1-6 */
         background: -webkit-linear-gradient(to top left, rgb(255, 255, 255), rgb(255, 255, 255));
-
         /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
         background: linear-gradient(to top left, rgb(255, 255, 255), rgb(255, 255, 255))
     }
@@ -23,8 +21,7 @@
                         {{#each orders}}
                         <div class="card-body p-4">
                             <div class="d-flex justify-content-between align-items-center mb-4">
-                                <p class="lead fw-normal mb-0" style="color: #ffffff;">Receipt</p>
-                                 
+                                <p class="lead fw-normal mb-0" style="color: #ffffff;">Receipt</p>                                
                             </div>
                             {{#each products}}
                             <div class="card shadow-0 border mb-4">
@@ -37,7 +34,6 @@
                                             class="col-md-2 text-center d-flex justify-content-center align-items-center">
                                             <p class="text-muted mb-0">{{product.name}}</p>
                                         </div>
-
                                         <div
                                             class="col-md-2 text-center d-flex justify-content-center align-items-center">
                                             <p class="text-muted mb-0 small">{{product.category}}</p>
@@ -49,8 +45,7 @@
                                         <div
                                             class="col-md-2 text-center d-flex justify-content-center align-items-center">
                                             <p class="text-muted mb-0 small">₹{{product.price}}</p>
-                                        </div>
-                                         
+                                        </div>                                        
                                         {{/each}}
                                     </div>
                                     <hr class="mb-4" <div class="row d-flex align-items-center">
@@ -65,13 +60,11 @@
                         </div>
                        
                         <div class="container">
-
                             <div class="d-flex justify-content-between pt-2">
                                 <p class="fw-bold mb-0">Order Details</p>
                                 <p class="text-muted mb-0"><span class="fw-bold me-4">Total</span> ₹{{total}}</p>
-                            </div>
-                            
-                                        <div class="d-flex justify-content-between pt-2">
+                            </div>                           
+                                <div class="d-flex justify-content-between pt-2">
                                 <p class="text-muted mb-0">Address Details : {{shippingAddress.address}}  <br>State: {{shippingAddress.state}} 
                                     <br>  Post Code: {{shippingAddress.postCode}}
                                     <br>  Phone Number: {{shippingAddress.phone}}
@@ -95,12 +88,7 @@
                                 
                                 <p class="text-muted mb-0">Order Status : {{status}}</p>
                                 <p class="text-muted mb-0"><span class="fw-bold me-4">Discount</span> ₹00.00</p>
-                            </div>
-
-                            {{!-- <div class="d-flex justify-content-between">
-                                <p class="text-muted mb-0">Invoice Date : {{date}}</p>
-                            </div> --}}
-                  
+                            </div>                                         
                             <div class="d-flex justify-content-between mb-5">
                                 {{#each products}}
                                 <p class="text-muted mb-0">Order Id : {{product.productid}}</p>
@@ -116,7 +104,6 @@
                             Amount: <span class="h2 mb-0 ms-2"> ₹ {{total}}</span></h5>
 
                             <form action="/setinvoice/{{_id}}" method="post">
-  {{!-- <input type="hidden" name="status" value="{{order.order_return}}"> --}}
   <button type="submit" class="badge btn-warning return-btn">View Invoice</button>
 </form>
                     </div>

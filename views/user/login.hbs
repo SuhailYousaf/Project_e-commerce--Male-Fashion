@@ -9,17 +9,19 @@
     <div class="container-fluid container">
         <div class="row">
             <div class="col-12 text-black">
-
-        <div class="d-flex justify-content-center mt-4">
-               
-
-                    <form style="width: 23rem;" class="mt-5" action="/Home" method="post"name="myForm" onsubmit="return validateForm()">
-
+                <div class="d-flex justify-content-center mt-4">
+                    <form
+                        style="width: 23rem;"
+                        class="mt-5"
+                        action="/Home"
+                        method="post"
+                        name="myForm"
+                        onsubmit="return validateForm()"
+                    >
                         <h3
                             class="fw-normal mb-3"
                             style="letter-spacing: 1px;"
                         >Log in</h3>
-
                         <div class="form-outline mb-4">
                             <input
                                 type="email"
@@ -29,7 +31,10 @@
                             />
                             <label class="form-label" for="form2Example18">Email
                                 address</label>
-                                <span id="emailError"class="text-danger error-message"></span>
+                            <span
+                                id="emailError"
+                                class="text-danger error-message"
+                            ></span>
                         </div>
                         {{#if emailErr}}
                             <label class="text-danger">{{emailErr}}</label>
@@ -46,7 +51,10 @@
                                 class="form-label"
                                 for="form2Example28"
                             >Password</label>
-                            <span id="passwordError"class="text-danger error-message"></span>
+                            <span
+                                id="passwordError"
+                                class="text-danger error-message"
+                            ></span>
                         </div>
                         {{#if passErr}}
                             <label class="text-danger">{{passErr}}</label>
@@ -63,63 +71,33 @@
                                 style="color: white;"
                             >Login with OTP</a>
                         </div>
-
                         <p class="small mb-5 pb-lg-2"><a
                                 class="text-muted"
                                 href="/forgotPass"
                             >Forgot password?</a></p>
                         <p>Don't have an account?
                             <a href="/signup" class="link-info">Register here</a></p>
-
                     </form>
                 </div>
             </div>
-            {{!-- <div class="col-sm-6 px-0 d-none d-sm-block">
-                <img
-                    src="https://images.unsplash.com/photo-1611316185995-9624c94487d1?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTB8fGhkJTIwcGhvdG9zfGVufDB8fDB8fHww&auto=format&fit=crop&w=500&q=60"
-                    alt="Login image"
-                    style="object-fit: cover; object-position: left; width: 100vh; height: 80vh"
-                />
-            </div> --}}
         </div>
     </div>
 </section>
 
 <script>
-function validateForm() {
-  
-  var email = document.forms["myForm"]["email"].value;
-  var password = document.forms["myForm"]["password"].value;
-  
-  
-  
-  
-  if (email == "") {
-    document.getElementById("emailError").innerHTML = "Please enter your email.";
-    return false;
-  } else {
-    document.getElementById("emailError").innerHTML = "";
-  }
-  
-  if (password == "") {
-    document.getElementById("passwordError").innerHTML = "Please enter your password.";
-    return false;
-  } else {
-    document.getElementById("passwordError").innerHTML = "";
-  }
- 
-}
-
-// Clear error message when user starts typing in input fields
-
-
-document.getElementById("email").addEventListener("input", function() {
-  document.getElementById("emailError").innerHTML = "";
-});
-
-document.getElementById("password").addEventListener("input", function() {
-  document.getElementById("passwordError").innerHTML = "";
-});
-
+    function validateForm() { var email =
+    document.forms["myForm"]["email"].value; var password =
+    document.forms["myForm"]["password"].value; if (email == "") {
+    document.getElementById("emailError").innerHTML = "Please enter your
+    email."; return false; } else {
+    document.getElementById("emailError").innerHTML = ""; } if (password == "")
+    { document.getElementById("passwordError").innerHTML = "Please enter your
+    password."; return false; } else {
+    document.getElementById("passwordError").innerHTML = ""; } } // Clear error
+    message when user starts typing in input fields
+    document.getElementById("email").addEventListener("input", function() {
+    document.getElementById("emailError").innerHTML = ""; });
+    document.getElementById("password").addEventListener("input", function() {
+    document.getElementById("passwordError").innerHTML = ""; });
 
 </script>

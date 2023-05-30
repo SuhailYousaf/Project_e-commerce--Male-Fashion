@@ -46,9 +46,7 @@
                                 {{/if}}
 
                             </tr>
-                            {{/each}}
-                                       
-                                       
+                            {{/each}}                                      
                                     </tbody>
                                 </table>
                             </div>
@@ -144,16 +142,12 @@
         </div>
     </div>
 </div>
-
 <style>
     .custom-input {
         background-color: white;
     }
 </style>
-
 {{/each}}
-
-
 {{!-- deactivate modal --}}
 {{#each coupons}}
 <div class="modal fade" id="deactivate{{this._id}}" tabindex="-1" role="dialog"
@@ -178,8 +172,6 @@
     </div>
 </div>
 {{/each}}
-
-
 {{!-- activate Modal --}}
 {{#each coupons}}
 <div class="modal fade" id="activate{{this._id}}" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle"
@@ -204,13 +196,9 @@
     </div>
 </div>
 {{/each}}
-
- 
-
 <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/alertifyjs@1.13.1/dist/js/alertify.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
 <script>
   // Function to handle the coupon addition
   function addCoupon() {
@@ -219,7 +207,6 @@
     const discountInput = document.querySelector('input[name="discount"]');
     const descriptionInput = document.querySelector('input[name="description"]');
     const dateInput = document.querySelector('input[name="date"]');
-
     // Check if any input is empty
     if (
       codeInput.value.trim() === '' ||
@@ -234,7 +221,6 @@
       });
       return; // Exit the function without proceeding further
     }
-
     // Check if the expiry date is a past date
     const currentDate = new Date().toISOString().split('T')[0];
     if (dateInput.value < currentDate) {
@@ -245,7 +231,6 @@
       });
       return; // Exit the function without proceeding further
     }
-
     // Show confirmation dialog
     Swal.fire({
       title: 'Confirmation',
@@ -302,7 +287,6 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/ion-rangeslider/2.3.1/js/ion.rangeSlider.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-
 <script>
      $(function () {
     $('#productsTable').DataTable();

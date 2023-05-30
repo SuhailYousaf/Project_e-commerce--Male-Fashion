@@ -13,7 +13,6 @@ var instance = new Razorpay({
     key_id: razorpay_key_id, 
     key_secret: razorpay_key_secret,
    })
-
 module.exports = {
     //User Signup & Login
     doSignUp: (userData) => {
@@ -32,7 +31,6 @@ module.exports = {
                         resolve(response);
                     })
                     .catch((err) => {
-                        console.log(err);
                         reject(err);
                     });
             } else {
@@ -54,7 +52,6 @@ module.exports = {
         resolve (count)
       });
     },
-
     doLogin: (userData) => {
         return new Promise(async (resolve, reject) => {
             const response = {};
@@ -80,7 +77,7 @@ module.exports = {
                         }
                     })
                     .catch((err) => {
-                        console.log(err);
+                      reject(err)
                     });
             } else {
                 response.status = "Invalid User";
@@ -88,7 +85,6 @@ module.exports = {
             }
         });
     },
-
     verifyMobile: (mob) => {
         return new Promise(async (resolve, reject) => {
           mobExist = await db
@@ -109,7 +105,6 @@ module.exports = {
           }
         })
       },
-
     findUserWithMob: (mob) => {
         return new Promise((resolve, reject) => {
           db.get().collection(collection.USER_COLLECTION)
@@ -120,8 +115,7 @@ module.exports = {
 // User Profile
     editProfile: (userId, info) => {
         return new Promise ((resolve, reject) => {
-            db.get().collection(collection.USER_COLLECTION).updateOne(
-                
+            db.get().collection(collection.USER_COLLECTION).updateOne(               
                 {
                     _id: new objectId(userId)
                 },
@@ -138,12 +132,18 @@ module.exports = {
         })
     },
     editPassword: (userId, info) => {
-        return new Promise( async (resolve, reject) => {
-            const user = db.get().collection(collection.USER_COLLECTION).findOne({
-                _id: new objectId(userId)
-            })
-            resolve(user);
-        })
+      return new Promise(async (resolve, reject) => {
+        try {
+          const user = await db.get()
+            .collection(collection.USER_COLLECTION)
+            .findOne({
+              _id: new objectId(userId)
+            });
+          resolve(user);
+        } catch (error) {
+          reject(error);
+        }
+      });
     },
     getWallet: (userId) => {
       return new Promise(async (resolve, reject) => {
@@ -155,7 +155,6 @@ module.exports = {
         }
       });
     },
-    
     profileImage: (userId, imageUrl) => {
       return new Promise((resolve, reject) => {
         db.get()
@@ -405,18 +404,21 @@ module.exports = {
     
         })
       },
-    getOrderedProducts: (ordersId) => {
+      getOrderedProducts: (ordersId) => {
         return new Promise(async (resolve, reject) => {
+          try {
             ordersId = new objectId(ordersId);
             const orders = await db
-                .get()
-                .collection(collection.ORDER_COLLECTION)
-                .find({ _id: ordersId })
-                .toArray();
-            console.log(orders);
+              .get()
+              .collection(collection.ORDER_COLLECTION)
+              .find({ _id: ordersId })
+              .toArray();
             resolve(orders);
+          } catch (error) {
+            reject(error);
+          }
         });
-    }, 
+      },
     cancelOrder:(orderId, reason)=>{
         return new Promise((resolve,reject)=>{
           db.get().collection(collection.ORDER_COLLECTION)
@@ -455,7 +457,6 @@ module.exports = {
             resolve(orderdata)
         })
     })
-
 },
     //wishlist
     getWishlist: (userId) => {
@@ -493,7 +494,6 @@ module.exports = {
                 ]).toArray();
                 resolve(wishlist);
             } catch (err) {
-                console.log(err);
                 reject(err);
             }
         })
@@ -592,7 +592,6 @@ module.exports = {
             let hmac = crypto.createHmac('sha256', razorpay_key_secret );            
             hmac.update(details.response.razorpay_order_id + '|' + details.response.razorpay_payment_id);
             hmac = hmac.digest('hex');
-            console.log( "ok da monu sugam alle", JSON.stringify(details));
             if(hmac===details.response.razorpay_signature){
                 resolve();
             }else{
@@ -631,12 +630,10 @@ module.exports = {
           ).then((response) => {
               resolve(response)
           }).catch((err) => {
-              
-              console.log(err);
+              reject(err);
           })
       })
   },
-
     //coupn
     couponApply:(couponCode, userId)=>{
         return new Promise(async(resolve, reject)=>{
@@ -666,7 +663,6 @@ module.exports = {
           resolve(coupon);
       })
   },
-
     // Banner
 getActiveBanner:()=> {
     return new Promise((resolve, reject)=> {

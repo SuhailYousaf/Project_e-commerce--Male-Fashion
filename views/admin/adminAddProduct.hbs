@@ -10,54 +10,39 @@
                 <div class="row g-4">
                     <div class="col-sm-12 col-xl-6">
                      <div class="bg-secondary rounded h-100 p-4">
-                        <div class="form-floating mb-3">
-                            
-                            
-                    <form action="/admin/adminAddProduct" method="post" enctype="multipart/form-data" class="tm-edit-product-form" name="myForm" onsubmit="return validateForm()">
-                  
+                        <div class="form-floating mb-3">                                                    
+                    <form action="/admin/adminAddProduct" method="post" enctype="multipart/form-data" class="tm-edit-product-form" name="myForm" onsubmit="return validateForm()">                  
                         <div class="input-group mb-3">
                             <label for="name" class="col-xl-4 col-lg-4 col-md-4 col-sm-5 col-form-label">Product
                                 Name
                             </label>
                             <input id="name" name="name" type="text"
                                 class="form-control validate col-xl-9 col-lg-8 col-md-8 col-sm-7" >
-                                <span id="nameError" class="text-danger error-message"></span>
-                               
+                                <span id="nameError" class="text-danger error-message"></span>                               
                         </div>
                         <div class="input-group mb-3">
-                            <label for="productid" class="col-xl-4 col-lg-4 col-md-4 col-sm-5 col-form-label">ProductId
-                              
-                  
+                            <label for="productid" class="col-xl-4 col-lg-4 col-md-4 col-sm-5 col-form-label">ProductId                                                
                             </label>
                             <input id="productid" name="productid" type="productid"
                                 class="form-control validate col-xl-9 col-lg-8 col-md-7 col-sm-7" >
 
-                                  <span id="stockError" class="text-danger error-message"></span>
-                                 
+                                  <span id="stockError" class="text-danger error-message"></span>                                
                         </div>
                         <div class="input-group mb-3">
                             <label for="description"
                                 class="col-xl-4 col-lg-4 col-md-4 col-sm-5 mb-2">Description</label>
                                 <input id="description" name="description" type="text"
                                 class="form-control validate col-xl-9 col-lg-8 col-md-8 col-sm-7" >
-                                  <span id="descriptionError" class="text-danger error-message"></span>
-                               
-                            {{!-- <textarea class="form-control validate col-xl-9 col-lg-8 col-md-8 col-sm-7" rows="3"
-                                name="description" ></textarea> --}}
+                                  <span id="descriptionError" class="text-danger error-message"></span>                        
                         </div>
                         <div class="input-group mb-3">
                             <label for="category"
-                                class="col-xl-4 col-lg-4 col-md-4 col-sm-5 col-form-label">Category</label>
-                                 {{!-- <input id="category" name="category" type="text"
-                                class="form-control validate col-xl-9 col-lg-8 col-md-8 col-sm-7" > --}}
-                                
+                                class="col-xl-4 col-lg-4 col-md-4 col-sm-5 col-form-label">Category</label>                               
                             <select class="custom-select col-xl-9 col-lg-8 col-md-8 col-sm-7" name="category"
                                 id="category" >
                                <option value="">Select one</option>
-                                {{#each category}}
-                                
-                                <option value="{{this.name}}">{{this.name}}</option>
-                              
+                                {{#each category}}                                
+                                <option value="{{this.name}}">{{this.name}}</option>                             
                                 {{/each}}
                             </select>
                             <span id="categoryError" class="text-danger error-message"></span>
@@ -67,9 +52,7 @@
                             </label>
                             <input id="expire_date" name="price" type="text"
                                 class="form-control validate col-xl-9 col-lg-8 col-md-8 col-sm-7" data-large-mode="true">
-                                   <span id="priceError" class="text-danger error-message"></span>
-                                 
-                                
+                                   <span id="priceError" class="text-danger error-message"></span>                                                                
                         </div>
                         <div class="input-group mb-3">
                             <label for="stock" class="col-xl-4 col-lg-4 col-md-4 col-sm-5 col-form-label">Units
@@ -79,10 +62,8 @@
                             <input id="stock" name="stock" type="text"
                                 class="form-control validate col-xl-9 col-lg-8 col-md-7 col-sm-7" >
 
-                                  <span id="stockError" class="text-danger error-message"></span>
-                                 
+                                  <span id="stockError" class="text-danger error-message"></span>                                 
                         </div>
-
                 </div>
                 <div class="col-xl-4 col-lg-4 col-md-12 mx-auto mb-4">
                     <div class="tm-product-img-dummy mx-auto">
@@ -97,7 +78,6 @@
                 <div class="input-group mb-3">
                     <div class="ml-auto col-xl-8 col-lg-8 col-md-8 col-sm-7 pl-0">
                         <button type="submit" class="btn btn-primary" onclick="showNotification()">Add</button>
-
                     </div>
                 </div>
             </div>
@@ -107,9 +87,7 @@
      </div>
     </div>
 </div>
-
 <script>
-
 function validateForm() {
   var name = document.forms["myForm"]["name"].value;
   var description = document.forms["myForm"]["description"].value;
@@ -117,8 +95,6 @@ function validateForm() {
   var price = document.forms["myForm"]["expire_date"].value;
   var stock = document.forms["myForm"]["stock"].value;
   var file = document.forms["myForm"]["image"].value;
-  
-
   // Validate name
   if (name == "") {
     document.getElementById("nameError").innerHTML = "Please enter a name.";
@@ -127,7 +103,6 @@ function validateForm() {
     });
     return false;
   }
-
   // Validate description
   if (description == "") {
     document.getElementById("descriptionError").innerHTML = "Please enter a description.";
@@ -136,7 +111,6 @@ function validateForm() {
     });
     return false;
   }
-
   // Validate category
   if (category == "") {
     document.getElementById("categoryError").innerHTML = "Please select a category.";
@@ -145,7 +119,6 @@ function validateForm() {
     });
     return false;
   }
-
   // Validate price
   if (price == "") {
     document.getElementById("priceError").innerHTML = "Please enter a price.";
@@ -166,7 +139,6 @@ function validateForm() {
     });
     return false;
   }
-
   // Validate stock
   if (stock == "") {
     document.getElementById("stockError").innerHTML = "Please enter the number of units in stock.";
@@ -187,7 +159,6 @@ function validateForm() {
     });
     return false;
   }
-
   // Validate file
   if (file == "") {
     alert("Please select a file to upload.");
@@ -196,12 +167,9 @@ function validateForm() {
     });
     return false;
   }
-
   return true;
 }
 </script>
-
-
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
     function showNotification() {

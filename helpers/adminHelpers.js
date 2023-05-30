@@ -37,7 +37,6 @@ module.exports = {
             resolve(userData);
         });
     },
-
     editUser: (userId, data) => {
         return new Promise((resolve, reject) => {
             userId = new objectId(userId);
@@ -59,12 +58,10 @@ module.exports = {
                     resolve();
                 })
                 .catch((err) => {
-                    console.log(err);
-                    reject();
+                    reject(err);
                 });
         });
     },
-
     deletUser: (userId) => {
         return new Promise((resolve, reject) => {
             userId = new objectId(userId);
@@ -74,7 +71,6 @@ module.exports = {
                     _id: new objectId(userId),
                 })
                 .then((response) => {
-                    console.log(response);
                     resolve();
                 })
                 .catch((err) => {
@@ -83,7 +79,6 @@ module.exports = {
                 });
         });
     },
-
     blockUser: (userId) => {
         return new Promise(async (resolve, reject) => {
             userId = new objectId(userId);
@@ -93,7 +88,6 @@ module.exports = {
                 .findOne({
                     _id: new objectId(userId),
                 });
-            console.log(user);
             if (user.status == true) {
                 db.get()
                     .collection(collection.USER_COLLECTION)
@@ -149,12 +143,10 @@ module.exports = {
                     resolve(users);
                 })
                 .catch(() => {
-                    console.log("errr");
-                    reject();
+                    reject(err);
                 });
         });
     },
-
     //admin order
     getSingle: (orderId) => {
         return new Promise((resolve, reject) => {
@@ -175,7 +167,6 @@ module.exports = {
                 });
         });
     },
-
     getUserOrder: () => {
         return new Promise(async (resolve, reject) => {
             const userDet = await db
@@ -187,7 +178,6 @@ module.exports = {
             resolve(userDet);
         });
     },
-
     adminOrderStatus: (orderId, status) => {
         return new Promise((resolve, reject) => {
             db.get()
@@ -225,7 +215,6 @@ module.exports = {
                 });
         });
     },
-
     getSingleOrder: (orderId) => {
         return new Promise(async (resolve, reject) => {
             const orderDet = await db
@@ -237,7 +226,6 @@ module.exports = {
             resolve(orderDet);
         });
     },
-
     adminSearchProduct: (serach) => {
         return new Promise(async (resolve, reject) => {
             await db
@@ -255,7 +243,6 @@ module.exports = {
                 });
         });
     },
-
     adminRefund: (orderId, userId) => {
         return new Promise(async (resolve, reject) => {
             try {
@@ -267,19 +254,15 @@ module.exports = {
                 if (order) {
                     const balance = order.total;
                     const date = order.date;
-
                     const walletCollection = db
                         .get()
                         .collection(collection.WALLET_COLLECTION);
-
                     const existingWallet = await walletCollection.findOne({
                         _id: new ObjectId(userId),
                     });
-
                     if (existingWallet) {
                         const existingBalance = existingWallet.balance;
                         const updatedBalance = existingBalance + balance;
-
                         await walletCollection.updateOne(
                             { _id: new ObjectId(userId) },
                             { $set: { balance: updatedBalance } }
@@ -292,7 +275,6 @@ module.exports = {
                             balance: balance,
                         });
                     }
-
                     await db
                         .get()
                         .collection(collection.ORDER_COLLECTION)
@@ -310,10 +292,8 @@ module.exports = {
             }
         });
     },
-
     //viewdatils in order
     getOrderedProducts: (ordersId) => {
-        console.log("inside333");
         return new Promise(async (resolve, reject) => {
             ordersId = new objectId(ordersId);
             const orders = await db
@@ -324,7 +304,6 @@ module.exports = {
             resolve(orders);
         });
     },
-
     //amdin coupon
     getCoupon: () => {
         return new Promise(async (resolve, reject) => {
@@ -351,7 +330,6 @@ module.exports = {
             resolve(coupons);
         });
     },
-
     adminAddCoupon: (coupon) => {
         return new Promise(async (resolve, reject) => {
             coupon.discount = Number(coupon.discount);
@@ -389,7 +367,6 @@ module.exports = {
             }
         });
     },
-
     deactivateoCupon: (couponId) => {
         return new Promise((resolve, reject) => {
             db.get()
@@ -435,7 +412,6 @@ module.exports = {
                 });
         });
     },
-
     adminEditCoupon: (couponId, coupon) => {
         return new Promise((resolve, reject) => {
             coupon.data = new Date(coupon.data);
@@ -469,7 +445,6 @@ module.exports = {
                 });
         });
     },
-
     //adminSalesReport
     getUsersCount: () => {
         return new Promise((resolve, reject) => {
@@ -480,13 +455,11 @@ module.exports = {
             resolve(users);
         });
     },
-
     getLastMonthTotal: () => {
         return new Promise(async (resolve, reject) => {
             try {
                 const lastMonth = new Date();
                 lastMonth.setMonth(lastMonth.getMonth() - 1);
-
                 const total = await db
                     .get()
                     .collection(collection.ORDER_COLLECTION)
@@ -515,7 +488,6 @@ module.exports = {
             }
         });
     },
-
     getOrderTotalPrice: () => {
         return new Promise(async (resolve, reject) => {
             const totalOrderPrice = await db
@@ -543,7 +515,6 @@ module.exports = {
             }
         });
     },
-
     getMonthCount: (month, year) => {
         return new Promise(async (resolve, reject) => {
             try {
@@ -563,7 +534,6 @@ module.exports = {
             }
         });
     },
-
     getAllDeliveredOrders: () => {
         return new Promise(async (resolve, reject) => {
             const deliveredOrders = await db
@@ -576,7 +546,6 @@ module.exports = {
             resolve(deliveredOrders);
         });
     },
-
     filterDate: (dates) => {
         return new Promise(async (resolve, reject) => {
             let newDate = [];
@@ -590,7 +559,6 @@ module.exports = {
                 }-${day < 10 ? "0" + day : day}`;
                 newDate.push(formattedDate);
             });
-
             const report = await db
                 .get()
                 .collection(collection.ORDER_COLLECTION)
@@ -609,7 +577,6 @@ module.exports = {
             resolve(report);
         });
     },
-
     getAllDeliveredOrdersCount: () => {
         return new Promise((resolve, reject) => {
             db.get()
@@ -626,7 +593,6 @@ module.exports = {
                 });
         });
     },
-
     getAllPlacedOrdersCount: () => {
         return new Promise((resolve, reject) => {
             db.get()
@@ -643,7 +609,6 @@ module.exports = {
                 });
         });
     },
-
     getAllCanceldOrdersCount: () => {
         return new Promise((resolve, reject) => {
             db.get()
@@ -660,7 +625,6 @@ module.exports = {
                 });
         });
     },
-
     getAllReturnOrdersCount: () => {
         return new Promise((resolve, reject) => {
             db.get()
@@ -677,7 +641,6 @@ module.exports = {
                 });
         });
     },
-
     // Admin Banner
     getBanner: () => {
         return new Promise(async (resolve, reject) => {
@@ -689,7 +652,6 @@ module.exports = {
             resolve(banner);
         });
     },
-
     addBanner: (banner) => {
         return new Promise((resolve, reject) => {
             db.get()
@@ -700,7 +662,6 @@ module.exports = {
                 });
         });
     },
-
     adminBannerImageEdit: (bannerId, imageUrl) => {
         return new Promise((resolve, reject) => {
             db.get()
@@ -720,7 +681,6 @@ module.exports = {
                 });
         });
     },
-
     adminEditBanner: (bannerId, banner) => {
         return new Promise((resolve, reject) => {
             db.get()
@@ -741,7 +701,6 @@ module.exports = {
                 });
         });
     },
-
     adminActivateBanner: (bannerId) => {
         return new Promise((resolve, reject) => {
             db.get()

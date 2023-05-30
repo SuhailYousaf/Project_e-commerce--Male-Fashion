@@ -11,7 +11,6 @@
                 <div class="row">
                     <div class="col-md-8 col-sm-12">
                         <h2 class="tm-block-title d-inline-block">Products</h2>
-
                         <div class="main">
                             <!-- Another variation with a button -->
                             <form action="/admin/adminSearchProduct" method="post">
@@ -25,9 +24,7 @@
                             </div>
                             </form>
                         </div>
-
-                    </div>
-                    
+                    </div>                    
                     <div class="col-md-4 col-sm-12 text-right">
                         <a href="/admin/adminAddProduct" class="btn btn-small btn-primary">Add New Product</a>
                     </div>
@@ -35,15 +32,12 @@
                  <div class="container-fluid pt-4 px-4">
                 <div class="row g-4">  
                     <div class="col-12">
-                        <div class="bg-secondary rounded h-100 p-4">
-                        
+                        <div class="bg-secondary rounded h-100 p-4">                       
                             <div class="table-responsive">
-                                <table class="table">
-                
+                                <table class="table">                
                     <table class="table table-hover table-striped tm-table-striped-even mt-3" id="productsTable">
                         <thead>
-                            <tr class="tm-bg-gray">
-                                
+                            <tr class="tm-bg-gray">                              
                                 <th scope="col">Product Name</th>
                                 <th scope="col">ProductId</th>
                                 <th scope="col">Product Category</th>
@@ -57,8 +51,7 @@
                         </thead>
                         <tbody>
                             {{#each productData}}
-                            <tr>
-                               
+                            <tr>                               
                                 <td class="tm-product-name">{{this.name}}</td>
                                  <td class="tm-product-name">{{this.productid}}</td>
                                 <td class="text-center">{{this.category}}</td>
@@ -161,17 +154,12 @@
         </div>
     </div>
 </div>
-
 <style>
     .custom-input {
         background-color: white;
     }
 </style>
-
-
-
     {{/each}}
-
     {{!-- Delete Modal --}}
     {{#each productData}}
     <div class="modal fade" id="delete{{this._id}}" tabindex="-1" role="dialog"
@@ -219,9 +207,7 @@
                             </div>
                             </form>
                         </div>
-
-                    </div>
-                    
+                    </div>                   
                     <div class="col-md-4 col-sm-12 text-right">
                         <a href="/admin/adminAddProduct" class="btn btn-small btn-primary">Add New Product</a>
                     </div>
@@ -251,8 +237,7 @@
                         </thead>
                         <tbody>
                             {{#each product}}
-                            <tr>
-                               
+                            <tr>                              
                                 <td class="tm-product-name">{{this.name}}</td>
                                  <td class="tm-product-name">{{this.productid}}</td>
                                 <td class="text-center">{{this.category}}</td>
@@ -450,10 +435,6 @@
         paginationElement.innerHTML = pageLinks;
     });
 </script>
-
-
-
-
 <script>
 function validateForm(form) {
     var name = form.name.value.trim();
@@ -461,10 +442,7 @@ function validateForm(form) {
     var description = form.description.value.trim();
     var price = parseFloat(form.price.value);
     var stock = parseInt(form.stock.value);
-    
-
     var isValid = true;
-
     // Reset error messages
     var errorElements = form.getElementsByClassName('error-message');
     for (var i = 0; i < errorElements.length; i++) {
@@ -499,9 +477,7 @@ function validateForm(form) {
     if (isNaN(stock) || stock <= 0) {
         document.getElementById('stock-error').innerHTML = 'Please enter a valid stock quantity.';
         isValid = false;
-    }
-
-   
+    }  
     return isValid;
 }
 </script>

@@ -16,12 +16,7 @@
                             <i class="fa fa-chart-bar fa-3x text-primary"></i>
                             <div class="ms-3">
                                 <p class="mb-2">Total Users</p>
-                                <h6 class="mb-0">{{userCount}}</h6>
-                                {{!-- <p class="mb-0">
-                      <span class="text-success text-sm font-weight-bolder">Perfect</span>
-                      since 
-                      2023
-                    </p> --}}
+                                <h6 class="mb-0">{{userCount}}</h6>                           
                             </div>
                         </div>
                     </div>
@@ -56,16 +51,12 @@
       <input type="number" id="year" name="year" min="2022" max="2023" value="2023">
       <button type="button" onclick="updateSalesData()" class="btn-dark">Update</button>
     </form>
-                            <canvas id="myChart"></canvas>
+       <canvas id="myChart"></canvas>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
-
-    
 <script>
       let salesData = {
         '2023': [{{ jan }}, {{ feb }}, {{ mar }}, {{ apr }}, {{ may }}, {{ jun }}],
       };
-
       const ctx = document.getElementById('myChart');
       let myChart = new Chart(ctx, {
         type: 'bar',
@@ -85,26 +76,21 @@
           }
         }
       });
-
       function updateSalesData() {
         let year = document.getElementById('year').value;
         myChart.data.datasets[0].data = salesData[year];
         myChart.update();
       }
     </script>
-
-
                         </div>
                     </div>                                 
                     <div class="col-sm-12 col-xl-6">
                         <div class="bg-secondary rounded h-100 p-4">
                             <h6 class="mb-4">Pie Chart</h6>
                             <canvas id="myChart2"></canvas>
-
             <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
             <script>
               const ctx2 = document.getElementById('myChart2');
-
               const data = {
                 labels: [
                   'Orders Delivered',
@@ -124,12 +110,10 @@
                   hoverOffset: 4
                 }]
               };
-
               const config = {
                 type: 'pie',
                 data: data,
               };
-
               new Chart(ctx2, config);
             </script>
                         </div>
@@ -140,10 +124,4 @@
             <!-- Chart End -->
                 </div> 
             </div>
-            <!-- Sale & Revenue End -->
-
-            
-   
-
-    
 </section>

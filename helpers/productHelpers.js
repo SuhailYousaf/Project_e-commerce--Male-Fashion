@@ -2,7 +2,6 @@ var db = require("../config/connection");
 var collection = require("../config/collection");
 const objectId = require("mongodb-legacy").ObjectId;
 const slugify = require("slugify");
-
 module.exports = {
     addProducts: (product) => {
         return new Promise((resolve, reject) => {
@@ -33,7 +32,6 @@ module.exports = {
             }
         });
     },
-
     getSomeProducts: () => {
         return new Promise(async (resolve, reject) => {
             const someProduct = await db
@@ -49,7 +47,6 @@ module.exports = {
             }
         });
     },
-
     getProducts: (currentPage) => {
         return new Promise(async (resolve, reject) => {
             currentPage = parseInt(currentPage);
@@ -71,7 +68,6 @@ module.exports = {
             }
         });
     },
-
     getProductsAdmin: (currentPage) => {
         return new Promise(async (resolve, reject) => {
             currentPage = parseInt(currentPage);
@@ -93,7 +89,6 @@ module.exports = {
             }
         });
     },
-
     getSingleProduct: (slug) => {
         return new Promise(async (resolve, reject) => {
             const productSingleData = await db
@@ -107,7 +102,6 @@ module.exports = {
                 });
         });
     },
-
     editProduct: (productId, data) => {
         return new Promise((resolve, reject) => {
           console.log(data)
@@ -138,7 +132,6 @@ module.exports = {
             })
         })
       },
-
     deleteProducts: (productId) => {
         return new Promise((resolve, reject) => {
             db.get()
@@ -155,7 +148,6 @@ module.exports = {
                 });
         });
     },
-
     deleteCategoryProducts: (category) => {
         return new Promise((resolve, reject) => {
             db.get()
@@ -165,12 +157,10 @@ module.exports = {
                     resolve();
                 })
                 .catch((err) => {
-                    console.log(err);
-                    reject();
+                    reject(err);
                 });
         });
     },
-
     getRelatedProducts: (category) => {
         return new Promise(async (resolve, reject) => {
             const getRelatedProduct = await db
@@ -213,7 +203,6 @@ module.exports = {
                 });
         });
     },
-
     editProductImage: (id, imgUrls) => {
         return new Promise((resolve, reject) => {
             db.get()
@@ -229,11 +218,9 @@ module.exports = {
                     }
                 )
                 .then((response) => {
-                    console.log(response);
                     resolve();
                 })
                 .catch((err) => {
-                    console.log(err);
                     reject();
                 });
         });
@@ -251,7 +238,6 @@ module.exports = {
             resolve(categories);
         });
     },
-
     filterPrice: (minPrice, maxPrice, Category) => {
         return new Promise(async (resolve, reject) => {
             let filteredProducts;
@@ -298,7 +284,6 @@ module.exports = {
             resolve(filteredProducts);
         });
     },
-
     sortPrice: (detailes, category) => {
         return new Promise(async (resolve, reject) => {
             try {
@@ -350,21 +335,23 @@ module.exports = {
                 }
                 resolve(product);
             } catch {
-                console.log("Error");
+                reject(err)
             }
         });
     },
-
     totalPages: () => {
         return new Promise(async (resolve, reject) => {
+          try {
             const totalCount = await db
-                .get()
-                .collection(collection.PRODUCT_COLLECTION)
-                .countDocuments({});
+              .get()
+              .collection(collection.PRODUCT_COLLECTION)
+              .countDocuments({});
             resolve(totalCount);
+          } catch (error) {
+            reject(error);
+          }
         });
-    },
-
+      },   
     totalOrdersPlaced: () => {
         return new Promise(async (resolve, reject) => {
             try {
@@ -378,7 +365,6 @@ module.exports = {
             }
         });
     },
-
     userSearchProduct: (serach) => {
         return new Promise(async (resolve, reject) => {
             await db

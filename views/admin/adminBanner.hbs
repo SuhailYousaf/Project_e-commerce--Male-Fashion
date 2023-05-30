@@ -1,13 +1,10 @@
 <div class="container">
         <div class="row tm-content-row tm-mt-big">
             <div class="col-xl-12 col-lg-12 tm-md-12 tm-sm-12 tm-block-col">
-                {{!-- <div class="bg-white tm-block h-100"> --}}
                     <div class="row">
-                       
                         <div class="col-md-8 col-sm-12">
                     <div class="col-md-8 col-sm-12">
                         <h2 class="tm-block-title d-inline-block">Banner</h2>
-
                     </div>
                     <div class="col-md-4 col-sm-12 text-right">
                             <a data-toggle="modal" data-target="#add" class="btn btn-small btn-primary">Add Banner</a>
@@ -29,7 +26,6 @@
                             </tr>
                         </thead>
                         <tbody>
-
                             {{#each banner}}
                             <tr>
                                 <td class="tm-product-name">{{this.heading}}</td>
@@ -72,29 +68,23 @@
                 <div class="modal-body">
                     <form class="text-dark" action="/admin/adminAddBanner" method="post"
                         enctype="multipart/form-data">
-
                         <div class="form-group">
                             <label for="name" class="col-form-label">Banner Heading : </label>
                             <input type="text" name="heading" value="{{this.heading}}" style="color: black;" class="border"
                                 id="name">
                         </div>
-
                         <div class="form-group">
                              <input id="fileInput" type="file" style="display:none;" name="image" />
                         <input type="button" class="btn btn-primary d-block mx-auto" value="Upload ..."
                             onclick="document.getElementById('fileInput').click();" required />
                         </div> 
-
-
                          <script>
                         // Get the input element for the file
                             var input = document.getElementById('fileInput');
-
                             // Add an event listener to the input element to detect when a file is selected
                             input.addEventListener('change', function() {
                               // Get the selected files
                               var files = input.files;
-
                               // Loop through the selected files
                               for (var i = 0; i < files.length; i++) {
                                 // Show a success notification for each file
@@ -112,13 +102,10 @@
                               }
                             });
                     </script>
-                    
-
                         <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" data-dismiss="modal">cancel</button>
                             <a><button type="submit" class="btn btn-primary">confirm</button></a>
                         </div>
-
                     </form>
                 </div>
             </div>
@@ -139,32 +126,26 @@
                 <div class="modal-body">
                     <form class="text-dark" action="/admin/adminEditBanner/{{this._id}}" method="post"
                         enctype="multipart/form-data">
-
                         <div class="form-group">
                             <label for="name" class="col-form-label">Banner Heading : </label>
                             <input type="text" name="heading" value="{{this.heading}}" style="color: black;" class="border"
                                 id="name">
                         </div>
-
                         <div class="form-group">
                              <input id="fileInput" type="file" style="display:none;" name="image" />
                         <input type="button" class="btn btn-primary d-block mx-auto" value="Upload ..."
                             onclick="document.getElementById('fileInput').click();" required />
                         </div>
-
                         <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" data-dismiss="modal">cancel</button>
                             <a><button type="submit" class="btn btn-primary">confirm</button></a>
                         </div>
-
                     </form>
                 </div>
             </div>
         </div>
     </div>
     {{/each}}
-
-
 {{!-- activate modal --}}
 {{#each banner}}
 <div class="modal fade" id="activate{{this._id}}" tabindex="-1" role="dialog"
@@ -189,8 +170,6 @@
     </div>
 </div>
 {{/each}}
-
-
 <script>
     $(function () {
         $('#productsTable').DataTable();

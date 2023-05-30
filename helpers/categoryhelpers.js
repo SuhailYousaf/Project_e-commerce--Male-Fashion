@@ -2,7 +2,6 @@ const db = require("../config/connection");
 const collection = require("../config/collection");
 const { response } = require("../app");
 const objectId = require("mongodb-legacy").ObjectId;
-
 module.exports = {
     addCategory: (details) => {
         return new Promise(async (resolve, reject) => {
@@ -46,7 +45,6 @@ module.exports = {
             }
         });
     },
-
     getCategory: () => {
         return new Promise(async (resolve, reject) => {
             const category = await db
@@ -62,7 +60,6 @@ module.exports = {
         });
     },
     deleteCategory: (categoryId, cateName) => {
-        console.log("received");
         return new Promise((resolve, reject) => {
             db.get()
                 .collection(collection.CATEGORY_COLLECTION)

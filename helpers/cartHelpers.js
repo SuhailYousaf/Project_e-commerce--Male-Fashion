@@ -1,7 +1,6 @@
 const db = require("../config/connection");
 const collection = require("../config/collection");
 const objectId = require("mongodb-legacy").ObjectId;
-
 module.exports = {
     addToCart: (productId, user, quantity) => {
         productId = new objectId(productId);
@@ -74,7 +73,6 @@ module.exports = {
             }
         });
     },
-
     getCart: (userId) => {
         return new Promise(async (resolve, reject) => {
             const userDetailes = await db
@@ -111,7 +109,6 @@ module.exports = {
             resolve(userDetailes);
         });
     },
-
     deleteCart: (productId, userId) => {
         return new Promise((resolve, reject) => {
             db.get()
@@ -131,7 +128,6 @@ module.exports = {
                 });
         });
     },
-
     deleteCartFull: (userId) => {
         return new Promise(async (resolve, reject) => {
             await db

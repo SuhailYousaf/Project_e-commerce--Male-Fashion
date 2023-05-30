@@ -695,9 +695,7 @@ module.exports = {
           
                       paypal.payment.create(create_payment_json, function (error, payment) {
                         if (error) {
-                          console.log(error + "asasasasas");
                           res.render('users/failure', { user: true, userName: req.session.userName });
-          
                         } else if (payment) {
                           try {
                             req.session.orderId = order.insertedId;
@@ -722,10 +720,7 @@ module.exports = {
                 console.log(err);
               }
             },
-
-
 //paypal success And error
-
 paypalSuccess: (req, res) => {
   const payerId = req.query.PayerID;
   const paymentId = req.query.paymentId;
@@ -744,7 +739,6 @@ paypalSuccess: (req, res) => {
     const userName = req.session.userName;
     if (error) {
       userHelpers.changeOrderPaymentStatus(req.session.orderId).then(() => {
-        console.log("changed");
         res.render('user/failure', { user: req.session.user, userName });
       }).catch(() => { });
     } else {
@@ -756,12 +750,9 @@ paypalSuccess: (req, res) => {
   );
 },
 
-
 failure: (req, res) => {
   res.render('user/failure', { user: true, userName: req.session.userName });
 },
-
-
 
 // Orders Page
 orders: async (req, res) => {
@@ -784,7 +775,6 @@ orders: async (req, res) => {
   },
 
     cancelOrder: (req, res) => {
-        console.log("inside one cance;l")
         const orderId = req.params.id;
         const reason = req.body.reason;
         userHelpers.cancelOrder(orderId, reason).then(() => {
@@ -904,7 +894,6 @@ orders: async (req, res) => {
           cartCount = await userHelpers.getCartCount(req.session.user._id); 
           res.render('user/wallet', { user: true, userName: req.session.userName, wallet: wallet,cartCount });
         } catch (error) {
-          // Handle any errors that occurred during the process
           res.render('error', { message: 'An error occurred', error: error });
         }
       },
