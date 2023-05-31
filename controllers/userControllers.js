@@ -41,15 +41,23 @@ module.exports = {
           coupon.expired = coupon.status === 'Expired' ? true : false;
         })
         const banner = await userHelpers.getActiveBanner()
-        cartCount = await userHelpers.getCartCount(req.session.user._id); 
-        res.render("index", {
-          user: true,
-          userName: req.session.userName,
-          products,
-          banner,
-          coupons,
-          cartCount
-        });
+        if(req.session.user){
+          cartCount = await userHelpers.getCartCount(req.session.user._id); 
+          res.render("index", {
+            user: true,
+            userName: req.session.userName,
+            products,
+            banner,
+            coupons,
+            cartCount
+          });}
+          else{res.render("index", {
+            user: true,
+            userName: req.session.userName,
+            products,
+            banner,
+            coupons      
+          });}
       });
     },
 

@@ -31,7 +31,7 @@
                             <th>Payment</th>
                             <th>Status</th>
                             <th>View</th>
-                            <th>Cancel</th>
+                            <th>Order</th>
                             <th>Review</th>
 
                         </tr>
@@ -51,21 +51,21 @@
                                 <td><a
                                         class="btn btn-dark"
                                         href="/orders/viewProduct/{{_id}}"
-                                    >View Details</a></td>
+                                    >Details</a></td>
 
                                {{#if isCancelled}}
                                     <td><a
                                             href=""
                                             class="btn btn-danger disabled"
                                         >Cancelled</a>
-                                        &nbsp;</td>
+                                        </td>
                                     <td>
                                 {{else if isDelivered}}
                                     <td><a
                                             class="btn btn-danger text-light"
                                             data-toggle="modal"
                                             data-target="#return{{_id}}"
-                                        >Return Order</a></td>
+                                        >Return</a></td>
                                     <td>
 
                                         <style>
@@ -84,7 +84,7 @@
                                                 class="_1dki8b col-1-5"
                                             />
                                             <span class="_2YpB-X col-3-5">Rate
-                                                &amp; Review Product</span>
+                                                 </span>
                                         </a>
                                     </td>
 
@@ -92,18 +92,26 @@
                                     <td><a
                                             href=""
                                             class="btn btn-danger disabled"
-                                        >order returned</a>
-                                        &nbsp;</td>
-                                    <td>
+                                        >returned</a>
+                                        </td>
+                                   <td>
 
-                                        <div class="rating">
-                                            <i class="fa fa-star"></i>
-                                            <i class="fa fa-star"></i>
-                                            <i class="fa fa-star"></i>
-                                            <i class="fa fa-star"></i>
-                                            <i class="fa fa-star"></i>
-                                        </div>
-
+                                        <style>
+                                            .Efhm0G:hover { /* Add your hover
+                                            styles here */ background-color:
+                                            #3cdb7e; color: #333; cursor:
+                                            pointer; }
+                                        </style>
+                                        <a
+                                    
+                                        >
+                                            <img
+                                                src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0nMTYnIGhlaWdodD0nMTknIHZlcnNpb249IjEuMSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB2aWV3Qm94PSIwIDAgMTggMTgiPgoJPGcgZmlsbD0nbm9uZSc+CgkJPHBvbHlnb24gaWQ9IlNoYXBlIiBmaWxsPSIjMjg3NEYxIiBwb2ludHM9IjkgMTIuMDYyNSAxMy42Mzc1IDE1LjQzNzUgMTEuODYyNSA5Ljk4NzUgMTYuNSA2LjY4NzUgMTAuODEyNSA2LjY4NzUgOSAxLjA2MjUgNy4xODc1IDYuNjg3NSAxLjUgNi42ODc1IDYuMTM3NSA5Ljk4NzUgNC4zNjI1IDE1LjQzNzUiIC8+CgkJPHBvbHlnb24gaWQ9IlNoYXBlIiBwb2ludHM9IjAgMCAxOCAwIDE4IDE4IDAgMTgiIC8+Cgk8L2c+Cjwvc3ZnPg=="
+                                                class="_1dki8b col-1-5"
+                                            />
+                                            <span class="_2YpB-X col-3-5">Rate
+                                                 </span>
+                                        </a>
                                     </td>
                                 {{else}}
                                     <td><a
@@ -111,17 +119,26 @@
                                             class="btn btn-danger text-light"
                                             data-toggle="modal"
                                             data-target="#delete{{this._id}}"
-                                        >cancel order</a>
-                                        &nbsp;</td>
-                                    <td>
+                                        >cancel</a>
+                                        </td>
+                                   <td>
 
-                                        <div class="rating">
-                                            <i class="fa fa-star"></i>
-                                            <i class="fa fa-star"></i>
-                                            <i class="fa fa-star"></i>
-                                            <i class="fa fa-star"></i>
-                                            <i class="fa fa-star"></i>
-                                        </div>
+                                        <style>
+                                            .Efhm0G:hover { /* Add your hover
+                                            styles here */ background-color:
+                                            #3cdb7e; color: #333; cursor:
+                                            pointer; }
+                                        </style>
+                                        <a
+                                          
+                                        >
+                                            <img
+                                                src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0nMTYnIGhlaWdodD0nMTknIHZlcnNpb249IjEuMSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB2aWV3Qm94PSIwIDAgMTggMTgiPgoJPGcgZmlsbD0nbm9uZSc+CgkJPHBvbHlnb24gaWQ9IlNoYXBlIiBmaWxsPSIjMjg3NEYxIiBwb2ludHM9IjkgMTIuMDYyNSAxMy42Mzc1IDE1LjQzNzUgMTEuODYyNSA5Ljk4NzUgMTYuNSA2LjY4NzUgMTAuODEyNSA2LjY4NzUgOSAxLjA2MjUgNy4xODc1IDYuNjg3NSAxLjUgNi42ODc1IDYuMTM3NSA5Ljk4NzUgNC4zNjI1IDE1LjQzNzUiIC8+CgkJPHBvbHlnb24gaWQ9IlNoYXBlIiBwb2ludHM9IjAgMCAxOCAwIDE4IDE4IDAgMTgiIC8+Cgk8L2c+Cjwvc3ZnPg=="
+                                                class="_1dki8b col-1-5"
+                                            />
+                                            <span class="_2YpB-X col-3-5">Rate
+                                                 </span>
+                                        </a>
                                     </td>
 
                                 {{/if}}
