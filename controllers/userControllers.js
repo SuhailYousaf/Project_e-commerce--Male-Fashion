@@ -189,7 +189,7 @@ module.exports = {
                         });
                 } else {
                     // If the OTP is not approved, render the OTP verification page with an error message
-                    res.render("user/forgotPassOtp", { errMsg: "Invalid OTP" });
+                    res.render("user/forgotPassOtp", {user:true, errMsg: "Invalid OTP" });
                 }
             })
             .catch((error) => {
@@ -306,13 +306,7 @@ module.exports = {
                             req.session.user = response;
                             req.session.userName = response.name;
                             req.session.userLoggedIn = true;
-                            // res.render("index", {
-                            //     user: true,
-                            //     userName: req.session.userName,
-                            //     products,
-                            //     banner,
-                            //     coupons
-                            // });
+                          
                             productHelpers.getSomeProducts().then(async (products) => {
                               const coupons = await userHelpers.getCoupon()
                               coupons.forEach(coupon => {
@@ -331,7 +325,7 @@ module.exports = {
                         });
                 } else {
                     // If the OTP is not approved, render the OTP verification page with an error message
-                    res.render("user/otpLogin", { errMsg: "Invalid OTP" });
+                    res.redirect("user/otpPages", {user:true, errMsg: "Invalid OTP" });
                 }
             })
             .catch((error) => {
@@ -438,7 +432,7 @@ module.exports = {
                 });
             });
     },
-    //User Shop page
+    //User Shop page 
     productPage: async (req, res) => {
         const productData = req.params.id;
         const userName = req.session.userName;
@@ -687,8 +681,8 @@ module.exports = {
                           payment_method: "paypal",
                         },
                         redirect_urls: {                         
-                          return_url: "http://localhost:2000/success",
-                          cancel_url: "http://localhost:2000/cancel",
+                          return_url: "https://malefashion.website/success",
+                          cancel_url: "https://malefashion.website/cancel",
                         },
                         transactions: [
                           {
@@ -870,24 +864,12 @@ orders: async (req, res) => {
       res.render("user/userProfile", { user: true, userName, userDetailes: req.session.user, userProfile,cartCount });
     },
     userProfilePost: (req, res) => {
-        const userId = req.session.user._id;
-        userHelpers.editProfile(userId, req.body).then(() => {
-          if(req.body.oldPassword.length > 1){
-            userHelpers.editPassword(userId, req.body).then((response) => {
-              if(response){
-                req.session.changePassword = "";
-                res.redirect('/userProfile')
-              }else{
-                req.session.changePassword = "Invalid old password";
-                res.redirect('/userProfile')
-              }
-            })
-          }else{
-            req.session.changePassword = "";
-            res.redirect('/userProfile')
-          }
-        })
-      },
+      const userId = req.session.user._id;
+      userHelpers.editProfile(userId, req.body).then(() => {
+        req.session.changePassword = "";
+        res.redirect('/userProfile');
+      });
+    },
     
       manageAddress: async(req, res) => {
         const userName = req.session.userName;

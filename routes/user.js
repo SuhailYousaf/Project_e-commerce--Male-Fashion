@@ -22,7 +22,7 @@ router.get('/otpLoginPage',verifySession.ifUserLoggedIn, userControllers.otpLogi
 
 router.post('/otpLoginPagePost',verifySession.ifUserLoggedIn,userControllers.otpLoginPagePost)
 
-router.post('/otpVarificationLogin',verifySession.ifUserLoggedIn, userControllers.otpVarificationLogin)
+router.post('/otpVarificationLogin',verifySession.ifUserLoggedIn, userControllers.otpVarificationLogin);
 
 router.get('/forgotPass',verifySession.ifUserLoggedIn, userControllers.forgotPass)
 

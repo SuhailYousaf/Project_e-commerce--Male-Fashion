@@ -130,12 +130,11 @@
     <form action="/userProfilePost" method="post" id="postForm">
         <div class="row">
             <div class="col-md-4">
-                 <div class="profile-img">
-                    <img id="profile-image" src="{{userProfile.image}}"
-                        alt=""/>
+                <div class="profile-img">
+                    <img id="profile-image" src="{{userProfile.image}}" alt="" />
                     <div class="file btn btn-lg btn-primary">
                         Change Photo
-                        <input id="file-input" type="file" name="file" onchange="uploadProfileImage(event)"/>
+                        <input id="file-input" type="file" name="file" onchange="uploadProfileImage(event)" />
                     </div>
                 </div>
             </div>
@@ -147,7 +146,7 @@
                         <li class="nav-item">
                             <a class="nav-link active" id="home-tab" data-toggle="tab" href="#home" role="tab"
                                 aria-controls="home" aria-selected="true">Profile</a>
-                        </li>
+                        </li>                      
                     </ul>
                 </div>
             </div>
@@ -188,10 +187,10 @@
                                 <label for="name">Name</label>
                             </div>
                             <div class="col-md-6 pt-3">
-                                <input type="text" id="name" class="edit-field" name="name" 
-                                    value="{{userDetailes.name}}"  placeholder="" onkeyup="validateName()"disabled>
-                                      <label class="text-danger" id="nameError"></label>
-                                    
+                                <input type="text" id="name" class="edit-field" name="name"
+                                    value="{{userDetailes.name}}" placeholder="" onkeyup="validateName()" disabled>
+                                <label class="text-danger" id="nameError"></label>
+
                             </div>
                         </div>
                         <div class="row">
@@ -199,9 +198,9 @@
                                 <label for="email">Email</label>
                             </div>
                             <div class="col-md-6 pt-3">
-                                <input type="text" id="email" class="edit-field" name="email" 
-                                    value="{{userDetailes.email}}"  placeholder="" onkeyup="validateEmail()"disabled>
-                                    <label class="text-danger" id="emailError"></label>
+                                <input type="text" id="email" class="edit-field" name="email"
+                                    value="{{userDetailes.email}}" placeholder="" onkeyup="validateEmail()" disabled>
+                                <label class="text-danger" id="emailError"></label>
                             </div>
                         </div>
                         <div class="row">
@@ -211,10 +210,9 @@
                             <div class="col-md-6 pt-3">
                                 <input type="tel" id="phone" class="edit-field" name="phone" maxlength="10"
                                     value="{{userDetailes.phone}}" onkeyup="validatePhone()" disabled>
-                                     <label class="text-danger" id="phoneError"></label>
+                                <label class="text-danger" id="phoneError"></label>
                             </div>
-                        </div>
-                       
+                        </div>              
                         <div class="row">
                             <div class="col-md-6 pt-3">
                                 <label for="phone">Old Password</label>
@@ -239,10 +237,7 @@
                                 <label class="text-danger mt-3" id="submitError"></label>
                             </div>
                         </div>
-
-
                     </div>
-
                 </div>
             </div>
             {{/if}}
@@ -254,31 +249,9 @@
 <script>
     var newPassErr = document.getElementById('newPassErr');
     var submitError = document.getElementById('submitError');
-    var nameError = document.getElementById('nameError');
-    var emailError = document.getElementById('emailError');
-    var phoneError = document.getElementById('phoneError');
-
-    function validateName() {
-        var name = document.getElementById('name').value;
-        var nameChecker = /^[a-zA-Z]+(([',. -][a-zA-Z ])?[a-zA-Z])$/;
-
-        if (name.length < 1) {
-            nameError.innerHTML = 'Please enter your name';
-            return false;
-        }
-        if (name.match(nameChecker)) {
-            nameError.innerHTML = '';
-            return true;
-        } else {
-            nameError.innerHTML = 'Please enter a valid name';
-            return false;
-        }
-    }
-
     function validatePassword() {
         var newPassword = document.getElementById('newPassword').value;
-        var passChecker = /^(?=.\d)(?=.[a-z])(?=.[A-Z])(?=.[!@#$%^&*]).{8,}$/;
-
+        var passChecker = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*]).{8,}$/;
         if (newPassword.length < 1) {
             return true;
         }
@@ -290,43 +263,8 @@
             return false;
         }
     }
-
-    function validateEmail() {
-        var email = document.getElementById('email').value;
-        var emailChecker = /^([\w-\.]+@([\w-]+\.)+[\w-]{2,4})?$/;
-
-        if (email.length < 1) {
-            emailError.innerHTML = 'Please enter your email';
-            return false;
-        }
-        if (email.match(emailChecker)) {
-            emailError.innerHTML = '';
-            return true;
-        } else {
-            emailError.innerHTML = 'Please enter a valid email';
-            return false;
-        }
-    }
-
-    function validatePhone() {
-        var phone = document.getElementById('phone').value;
-        var phoneChecker = /^[0-9]{10}$/;
-
-        if (phone.length < 1) {
-            phoneError.innerHTML = 'Please enter your phone number';
-            return false;
-        }
-        if (phone.match(phoneChecker)) {
-            phoneError.innerHTML = '';
-            return true;
-        } else {
-            phoneError.innerHTML = 'Please enter a valid 10-digit phone number';
-            return false;
-        }
-    }
-
     function validateForm() {
-        if (!validateName() || !validatePassword() || !validateEmail() || !validatePhone()) {
+        if (!validatePassword()) {
             submitError.innerHTML = 'Please fix all errors to submit';
             setTimeout(() => {
                 submitError.style.display = 'none';
@@ -336,7 +274,6 @@
             submit();
         }
     }
-
     function editProfile() {
         const editClass = document.querySelectorAll('.edit-field');
         editClass.forEach(element => {
@@ -355,14 +292,11 @@
     }
 
 </script>
-
 <script>
-
   function uploadProfileImage(event) {
   var file = event.target.files[0];
   var formData = new FormData();
   formData.append('file', file);
-
   return new Promise((resolve, reject) => {
     $.ajax({
       url: '/uploadProfileImage',
@@ -385,7 +319,4 @@
     });
   });
 }
-
-
-
 </script>

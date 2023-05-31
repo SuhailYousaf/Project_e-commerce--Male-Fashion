@@ -537,8 +537,6 @@
         }, 2000);
 
       } else if (response.data.paymentMethod === 'card') {
-        //console.log(response.data.response + "responseeeeeeeeeeee");
-        //console.log(response.data.userDetails + "User detailes");
         razorpayPayment(response.data.response, response.data.userDetails);
       } else if (response.data.status === "success") {
         window.location.href = response.data.approval_link;
@@ -553,7 +551,7 @@
       "key": "rzp_test_RNyQLOaBWlWYlk",       // Enter the Key ID generated from the Dashboard
       "amount": order.amount * 100, // Amount is in currency subunits. Default currency is INR. Hence, 50000 refers to 50000 paise
       "currency": "INR",
-      "name": "Marvelous Wear", //your business name
+      "name": "MaleFashion", //your business name
       "description": "Test Transaction",
       "image": "https://res.cloudinary.com/dcc8meh8i/image/upload/v1679116198/logo3_gtrtz9.jpg",
       "order_id": order.id,       //This is a sample Order ID. Pass the `id` obtained in the response of Step 1

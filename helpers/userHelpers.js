@@ -5,6 +5,7 @@ const objectId = require("mongodb-legacy").ObjectId;
 const Razorpay = require('razorpay');
 const crypto = require('crypto');
 const { json } = require('body-parser');
+const { signUp } = require("../controllers/userControllers");
 require("dotenv").config();
 //razorpay
 const razorpay_key_id = process.env.RAZORPAY_KEY_ID;
@@ -114,7 +115,8 @@ module.exports = {
       },   
 // User Profile
     editProfile: (userId, info) => {
-        return new Promise ((resolve, reject) => {
+        return new Promise (async(resolve, reject) => {        
+          info.newPassword = await bcrypt.hash(info.newPassword, 10);
             db.get().collection(collection.USER_COLLECTION).updateOne(               
                 {
                     _id: new objectId(userId)
@@ -123,7 +125,8 @@ module.exports = {
                     $set:{
                         name: info.name,
                         email: info.email,
-                        phone: Number(info.phone)
+                        phone: Number(info.phone),
+                        password:info.newPassword
                     }
                 }
             ).then((response) => {
