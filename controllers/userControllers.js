@@ -5,12 +5,12 @@ const cartHelpers = require("../helpers/cartHelpers");
 const { ObjectId } = require("mongodb");
 const { default: axios } = require("axios");
 const { response } = require("../app");
-const cloudinary = require('../utils/cloudinary');
+const cloudinary = require("../utils/cloudinary");
 const now = new Date();
 
-const paypal=require('paypal-rest-sdk');
+const paypal = require("paypal-rest-sdk");
 const { Reject } = require("twilio/lib/twiml/VoiceResponse");
-const objectId = require('mongodb-legacy').ObjectId;
+const objectId = require("mongodb-legacy").ObjectId;
 
 // Twilio-config
 require("dotenv").config();
@@ -24,65 +24,67 @@ const paypal_client_id = process.env.PAYPAL_CLIENT_ID;
 
 const paypal_client_secret = process.env.PAYPAL_CLIENT_SECRET;
 
-
 paypal.configure({
-  'mode': 'sandbox', //sandbox or live
-  'client_id': paypal_client_id,
-  'client_secret': paypal_client_secret
+    mode: "sandbox", //sandbox or live
+    client_id: paypal_client_id,
+    client_secret: paypal_client_secret,
 });
-
 
 module.exports = {
     userHome: (req, res) => {
-      productHelpers.getSomeProducts().then(async (products) => {
-        const coupons = await userHelpers.getCoupon()
-        coupons.forEach(coupon => {
-          coupon.deactivate = coupon.status === 'Deactivated' ? true : false;
-          coupon.expired = coupon.status === 'Expired' ? true : false;
-        })
-        const banner = await userHelpers.getActiveBanner()
-        if(req.session.user){
-          cartCount = await userHelpers.getCartCount(req.session.user._id); 
-          res.render("index", {
-            user: true,
-            userName: req.session.userName,
-            products,
-            banner,
-            coupons,
-            cartCount
-          });}
-          else{res.render("index", {
-            user: true,
-            userName: req.session.userName,
-            products,
-            banner,
-            coupons      
-          });}
-      });
+        productHelpers.getSomeProducts().then(async (products) => {
+            const coupons = await userHelpers.getCoupon();
+            coupons.forEach((coupon) => {
+                coupon.deactivate =
+                    coupon.status === "Deactivated" ? true : false;
+                coupon.expired = coupon.status === "Expired" ? true : false;
+            });
+            const banner = await userHelpers.getActiveBanner();
+            if (req.session.user) {
+                cartCount = await userHelpers.getCartCount(
+                    req.session.user._id
+                );
+                res.render("index", {
+                    user: true,
+                    userName: req.session.userName,
+                    products,
+                    banner,
+                    coupons,
+                    cartCount,
+                });
+            } else {
+                res.render("index", {
+                    user: true,
+                    userName: req.session.userName,
+                    products,
+                    banner,
+                    coupons,
+                });
+            }
+        });
     },
 
     // check user blocked or unblock
-  userStatus: async (req, res, next) => {
-    const id =req.session.user._id;
-    const userProfile = await userHelpers.getUser(id).then((response)=>{
-      if (response.status == "No user Found") {
-        res.render("user/signup", {
-            user: true,
-            errMsg: response.status,
+    userStatus: async (req, res, next) => {
+        const id = req.session.user._id;
+        const userProfile = await userHelpers.getUser(id).then((response) => {
+            if (response.status == "No user Found") {
+                res.render("user/signup", {
+                    user: true,
+                    errMsg: response.status,
+                });
+            } else if (response.status == false) {
+                req.session.userLoggedIn = false;
+                req.session.userName = false;
+                res.render("user/login", {
+                    user: true,
+                    errMsg: "User Blocked",
+                });
+            } else {
+                next();
+            }
         });
-    } else if (response.status == false) {
-          req.session.userLoggedIn = false;
-          req.session.userName = false;
-        res.render("user/login", {
-            user: true,
-            errMsg: "User Blocked",
-        });
-       } else {
-          next();
-        }
-        
-    });
-  },
+    },
     //User Login & Logout
     userLogin: (req, res) => {
         if (req.session.userLoggedIn) {
@@ -133,13 +135,13 @@ module.exports = {
         // Validate the password using regular expressions
         const passwordRegex =
             /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*]).{8,}$/;
-            if (!passwordRegex.test(req.body.password)) {
-                res.render("user/forgotPass", {
-                    user: true,
-                    errMsg: "Password must contain 8 characters, uppercase, lowercase, number, and special(!@#$%^&*)",
-                });
-                return;
-            }
+        if (!passwordRegex.test(req.body.password)) {
+            res.render("user/forgotPass", {
+                user: true,
+                errMsg: "Password must contain 8 characters, uppercase, lowercase, number, and special(!@#$%^&*)",
+            });
+            return;
+        }
         userHelpers.checkuserBlockExist(req.body.email).then((response) => {
             if (response.status == "No user Found") {
                 res.render("user/signup", {
@@ -189,7 +191,10 @@ module.exports = {
                         });
                 } else {
                     // If the OTP is not approved, render the OTP verification page with an error message
-                    res.render("user/forgotPassOtp", {user:true, errMsg: "Invalid OTP" });
+                    res.render("user/forgotPassOtp", {
+                        user: true,
+                        errMsg: "Invalid OTP",
+                    });
                 }
             })
             .catch((error) => {
@@ -198,49 +203,49 @@ module.exports = {
                     errMsg: "Something went wrong. Please try again.",
                 });
             });
-    },  
+    },
     userLoginPost: async (req, res) => {
-      try {
-        const response = await userHelpers.doLogin(req.body);
-    
-        if (response.status === "Invalid Password") {
-          req.session.passErr = response.status;
-          res.redirect("/login");
-        } else if (response.status === "Invalid User") {
-          req.session.emailErr = response.status;
-          res.redirect("/login");
-        } else if (response.status === "User Blocked!!!") {
-          req.session.passErr = response.status;
-          res.redirect("/login");
-        } else {
-          req.session.user = response.user;
-          req.session.userName = req.session.user.name;
-          req.session.userLoggedIn = true;
-    
-          const products = await productHelpers.getSomeProducts();
-          const coupons = await userHelpers.getCoupon();
-    
-          coupons.forEach((coupon) => {
-            coupon.deactivate = coupon.status === "Deactivated";
-            coupon.expired = coupon.status === "Expired";
-          });
-    
-          const banner = await userHelpers.getActiveBanner();          
-            cartCount = await userHelpers.getCartCount(req.session.user._id); 
-          res.render("index", {
-            user: true,
-            userName: req.session.userName,
-            products,
-            banner,
-            coupons,
-            cartCount,
-          });
-  
-          
+        try {
+            const response = await userHelpers.doLogin(req.body);
+
+            if (response.status === "Invalid Password") {
+                req.session.passErr = response.status;
+                res.redirect("/login");
+            } else if (response.status === "Invalid User") {
+                req.session.emailErr = response.status;
+                res.redirect("/login");
+            } else if (response.status === "User Blocked!!!") {
+                req.session.passErr = response.status;
+                res.redirect("/login");
+            } else {
+                req.session.user = response.user;
+                req.session.userName = req.session.user.name;
+                req.session.userLoggedIn = true;
+
+                const products = await productHelpers.getSomeProducts();
+                const coupons = await userHelpers.getCoupon();
+
+                coupons.forEach((coupon) => {
+                    coupon.deactivate = coupon.status === "Deactivated";
+                    coupon.expired = coupon.status === "Expired";
+                });
+
+                const banner = await userHelpers.getActiveBanner();
+                cartCount = await userHelpers.getCartCount(
+                    req.session.user._id
+                );
+                res.render("index", {
+                    user: true,
+                    userName: req.session.userName,
+                    products,
+                    banner,
+                    coupons,
+                    cartCount,
+                });
+            }
+        } catch (err) {
+            console.log(err);
         }
-      } catch (err) {
-        console.log(err);
-      }
     },
 
     logout: (req, res) => {
@@ -262,34 +267,47 @@ module.exports = {
     },
 
     otpLoginPagePost: (req, res) => {
-      userHelpers.verifyMobile(req.body.phone)
-          .then((response) => {
-              if (response == "No user found") {
-                  res.render("user/loginOtp", {user: true, errMsg: "User Not Exist" });
-              } else if (response == "User Blocked") {
-                  res.render("user/loginOtp", {user: true, errMsg: "User Blocked" });
-              } else if (response == "user Exist") {
-                  // OTP sent
-                  client.verify.v2.services(serviceSid)
-                      .verifications.create({
-                          to: "+91" + req.body.phone,
-                          channel: "sms",
-                      })
-                      .then(() => {
-                          req.session.userDetails = req.body;                          
-                          res.render("user/otpPages", { user: true });
-                      })
-                      .catch((error) => {                       
-                          res.render("user/loginOtp", {user: true, errMsg: "Error sending OTP" });
-                      });
-              }
-          })
-          .catch((error) => {
-              res.render("user/loginOtp", {user: true, errMsg: "Error verifying mobile" });
-          });
-  },
-  
-   
+        userHelpers
+            .verifyMobile(req.body.phone)
+            .then((response) => {
+                if (response == "No user found") {
+                    res.render("user/loginOtp", {
+                        user: true,
+                        errMsg: "User Not Exist",
+                    });
+                } else if (response == "User Blocked") {
+                    res.render("user/loginOtp", {
+                        user: true,
+                        errMsg: "User Blocked",
+                    });
+                } else if (response == "user Exist") {
+                    // OTP sent
+                    client.verify.v2
+                        .services(serviceSid)
+                        .verifications.create({
+                            to: "+91" + req.body.phone,
+                            channel: "sms",
+                        })
+                        .then(() => {
+                            req.session.userDetails = req.body;
+                            res.render("user/otpPages", { user: true });
+                        })
+                        .catch((error) => {
+                            res.render("user/loginOtp", {
+                                user: true,
+                                errMsg: "Error sending OTP",
+                            });
+                        });
+                }
+            })
+            .catch((error) => {
+                res.render("user/loginOtp", {
+                    user: true,
+                    errMsg: "Error verifying mobile",
+                });
+            });
+    },
+
     otpVarificationLogin: (req, res) => {
         const userOtp = req.body.otp;
         const phone = req.session.userDetails.phone;
@@ -306,26 +324,39 @@ module.exports = {
                             req.session.user = response;
                             req.session.userName = response.name;
                             req.session.userLoggedIn = true;
-                          
-                            productHelpers.getSomeProducts().then(async (products) => {
-                              const coupons = await userHelpers.getCoupon()
-                              coupons.forEach(coupon => {
-                                coupon.deactivate = coupon.status === 'Deactivated' ? true : false;
-                                coupon.expired = coupon.status === 'Expired' ? true : false;
-                              })
-                              const banner = await userHelpers.getActiveBanner();
-                              res.render("index", {
-                                user: true,
-                                userName: req.session.userName,
-                                products,
-                                banner,
-                                coupons
-                              });
-                            });
+
+                            productHelpers
+                                .getSomeProducts()
+                                .then(async (products) => {
+                                    const coupons =
+                                        await userHelpers.getCoupon();
+                                    coupons.forEach((coupon) => {
+                                        coupon.deactivate =
+                                            coupon.status === "Deactivated"
+                                                ? true
+                                                : false;
+                                        coupon.expired =
+                                            coupon.status === "Expired"
+                                                ? true
+                                                : false;
+                                    });
+                                    const banner =
+                                        await userHelpers.getActiveBanner();
+                                    res.render("index", {
+                                        user: true,
+                                        userName: req.session.userName,
+                                        products,
+                                        banner,
+                                        coupons,
+                                    });
+                                });
                         });
                 } else {
                     // If the OTP is not approved, render the OTP verification page with an error message
-                    res.redirect("user/otpPages", {user:true, errMsg: "Invalid OTP" });
+                    res.redirect("user/otpPages", {
+                        user: true,
+                        errMsg: "Invalid OTP",
+                    });
                 }
             })
             .catch((error) => {
@@ -344,7 +375,10 @@ module.exports = {
     signUpPost: (req, res) => {
         // Check if the password and rePassword fields match
         if (req.body.password !== req.body.rePassword) {
-            res.render("user/signup", { user:true, errMsg: "Password does not match" });
+            res.render("user/signup", {
+                user: true,
+                errMsg: "Password does not match",
+            });
             return;
         }
         // Remove the rePassword field from the request body
@@ -378,12 +412,12 @@ module.exports = {
                 res.redirect("/otpverification");
             })
             .catch((err) => {
-              req.session.userDetailes = req.body;
-              res.render("user/signup", {
-                user: true,
-                errMsg: "Password must contain 8 characters, uppercase, lowercase, number, and special(!@#$%^&*)",
+                req.session.userDetailes = req.body;
+                res.render("user/signup", {
+                    user: true,
+                    errMsg: "Password must contain 8 characters, uppercase, lowercase, number, and special(!@#$%^&*)",
+                });
             });
-          })
     },
     //Otp Page Render and Verfication
     otpPageRender: (req, res) => {
@@ -432,40 +466,40 @@ module.exports = {
                 });
             });
     },
-    //User Shop page 
+    //User Shop page
     productPage: async (req, res) => {
         const productData = req.params.id;
         const userName = req.session.userName;
         productHelpers
-          .getSingleProduct(productData)
-          .then(async (product) => {
-            if (!product) {
-                res.render("user/productNotFound", {
-                    user: true,
-                    userName,
-                });
-            } else {
-              const getRelatedProduct = await productHelpers.getRelatedProducts(
-                product.category
-              );
-              res.render("user/productPages", {
-                user: true,
-                userName,
-                product,
-                getRelatedProduct,
-              });
-            }      
-          })
-          .catch((err) => {
-            console.log(err);
-          });
-      },
-
+            .getSingleProduct(productData)
+            .then(async (product) => {
+                if (!product) {
+                    res.render("user/productNotFound", {
+                        user: true,
+                        userName,
+                    });
+                } else {
+                    const getRelatedProduct =
+                        await productHelpers.getRelatedProducts(
+                            product.category
+                        );
+                    res.render("user/productPages", {
+                        user: true,
+                        userName,
+                        product,
+                        getRelatedProduct,
+                    });
+                }
+            })
+            .catch((err) => {
+                console.log(err);
+            });
+    },
 
     userSearchProduct: async (req, res) => {
         const userName = req.session.userName;
         const product = await productHelpers.userSearchProduct(req.body.name);
-        res.render("user/shop", { user: true, userName, product});
+        res.render("user/shop", { user: true, userName, product });
     },
     //User Cart Page
     shopPage: async (req, res) => {
@@ -475,38 +509,62 @@ module.exports = {
         const maxPrice = req.session.maxPrice;
         const sortedProducts = req.session.sortedProduct;
         const categories = await productHelpers.getListedCategory();
-        cartCount = await userHelpers.getCartCount(req.session.user._id); 
+        cartCount = await userHelpers.getCartCount(req.session.user._id);
 
         //pagination
         const totalPages = await productHelpers.totalPages();
         const currentPage = req.query.page || 1;
-    
+
         if (filteredProducts) {
-          res.render("user/shop", {user: true,categories,userName,filteredProducts,minPrice,maxPrice});
-          req.session.filteredProduct = false;
-        } else if (sortedProducts) {
-          res.render("user/shop", {user: true,categories,userName,sortedProducts,minPrice,maxPrice});
-          req.session.sortedProduct = false;
-        } else {
-          req.session.category = false;
-          req.session.filteredProduct = false;
-          req.session.sortedProduct = false;
-          req.session.maxPrice = false;
-          req.session.minPrice = false;
-          productHelpers.getProducts(currentPage).then((products) => {
-              res.render("user/shop", {user: true,categories,userName,products,currentPage,totalPages,cartCount});
-            })
-            .catch((err) => {
-              console.log(err);
+            res.render("user/shop", {
+                user: true,
+                categories,
+                userName,
+                filteredProducts,
+                minPrice,
+                maxPrice,
             });
+            req.session.filteredProduct = false;
+        } else if (sortedProducts) {
+            res.render("user/shop", {
+                user: true,
+                categories,
+                userName,
+                sortedProducts,
+                minPrice,
+                maxPrice,
+            });
+            req.session.sortedProduct = false;
+        } else {
+            req.session.category = false;
+            req.session.filteredProduct = false;
+            req.session.sortedProduct = false;
+            req.session.maxPrice = false;
+            req.session.minPrice = false;
+            productHelpers
+                .getProducts(currentPage)
+                .then((products) => {
+                    res.render("user/shop", {
+                        user: true,
+                        categories,
+                        userName,
+                        products,
+                        currentPage,
+                        totalPages,
+                        cartCount,
+                    });
+                })
+                .catch((err) => {
+                    console.log(err);
+                });
         }
-      },
+    },
 
     cart: async (req, res) => {
         const userName = req.session.user.name;
         const userId = req.session.user._id;
         const userDetailes = await cartHelpers.getCart(userId);
-        cartCount = await userHelpers.getCartCount(req.session.user._id); 
+        cartCount = await userHelpers.getCartCount(req.session.user._id);
         if (!userDetailes.length == 0) {
             await cartHelpers
                 .getCartTotal(req.session.user._id)
@@ -516,11 +574,11 @@ module.exports = {
                         userName,
                         userDetailes,
                         total: total,
-                        cartCount
+                        cartCount,
                     });
                 });
         } else {
-            res.render("user/cart", { user: true, userName ,cartCount});
+            res.render("user/cart", { user: true, userName, cartCount });
         }
     },
 
@@ -583,26 +641,27 @@ module.exports = {
     // User Checkout Page
 
     checkOutPage: async (req, res) => {
-      const userName = req.session.user.name;
-      const addresses = await userHelpers.getAddress(req.session.user._id);
-      const coupons = await userHelpers.getCoupon();
-      coupons.forEach(coupon => {
-        coupon.deactivate = coupon.status === 'Deactivated' ? true : false;
-        coupon.expired = coupon.status === 'Expired' ? true : false;
-      });
-      await cartHelpers.getCartTotal(req.session.user._id)
-        .then((total) => {
-          res.render("user/checkOut", {
-            user: true,
-            userName,
-            addresses,
-            total,
-            coupons
-          });
-        })
-        .catch((err) => {
-          console.log(err);
+        const userName = req.session.user.name;
+        const addresses = await userHelpers.getAddress(req.session.user._id);
+        const coupons = await userHelpers.getCoupon();
+        coupons.forEach((coupon) => {
+            coupon.deactivate = coupon.status === "Deactivated" ? true : false;
+            coupon.expired = coupon.status === "Expired" ? true : false;
         });
+        await cartHelpers
+            .getCartTotal(req.session.user._id)
+            .then((total) => {
+                res.render("user/checkOut", {
+                    user: true,
+                    userName,
+                    addresses,
+                    total,
+                    coupons,
+                });
+            })
+            .catch((err) => {
+                console.log(err);
+            });
     },
 
     checkOutPost: (req, res) => {
@@ -624,203 +683,265 @@ module.exports = {
 
     //orders
 
-            placeOrder: async (req, res) => {
-              try {
-                const addressId = req.body.address;
-                const userDetails = req.session.user;
-                const total = Number(req.body.total);
-                const paymentMethod = req.body.paymentMethod;
-                const shippingAddress = await userHelpers.findAddress(addressId, req.session.user._id);
-                const cartItems = await cartHelpers.getCart(req.session.user._id);
-                const now = new Date();
-                const status = req.body.paymentMethod === "COD" ? "placed" : "pending";
-          
-                //Order collection
-                const order = {
-                  userId: new objectId(req.session.user._id),
-                  userName: req.session.userName,
-                  item: cartItems,
-                  shippingAddress: shippingAddress,
-                  total: total,
-                  paymentMethod: paymentMethod,
-                  products: cartItems,
-                  date: new Date(now.getFullYear(), now.getMonth(), now.getDate(), 0, 0, 0, 0),
-                  status,
-                  coupon: req.body.coupon,
-                };
-          
-                const userId = req.session.user._id;
-                userHelpers.addOrderDetails(order, userId)
-                  .then((order) => {
-                    cartHelpers.deleteCartFull(req.session.user._id);
-          
-                    if (req.body.paymentMethod === "COD") {
-                      res.json({
+    placeOrder: async (req, res) => {
+        try {
+            const addressId = req.body.address;
+            const userDetails = req.session.user;
+            const total = Number(req.body.total);
+            const paymentMethod = req.body.paymentMethod;
+            const shippingAddress = await userHelpers.findAddress(
+                addressId,
+                req.session.user._id
+            );
+            const cartItems = await cartHelpers.getCart(req.session.user._id);
+            const now = new Date();
+            const status =
+                req.body.paymentMethod === "COD" ? "placed" : "pending";
+
+            //Order collection
+            const order = {
+                userId: new objectId(req.session.user._id),
+                userName: req.session.userName,
+                item: cartItems,
+                shippingAddress: shippingAddress,
+                total: total,
+                paymentMethod: paymentMethod,
+                products: cartItems,
+                date: new Date(
+                    now.getFullYear(),
+                    now.getMonth(),
+                    now.getDate(),
+                    0,
+                    0,
+                    0,
+                    0
+                ),
+                status,
+                coupon: req.body.coupon,
+            };
+
+            const userId = req.session.user._id;
+            userHelpers.addOrderDetails(order, userId).then((order) => {
+                cartHelpers.deleteCartFull(req.session.user._id);
+
+                if (req.body.paymentMethod === "COD") {
+                    res.json({
                         status: true,
                         paymentMethod: req.body.paymentMethod,
-                      });
-          
-                    } else if (req.body.paymentMethod === "card") {
-          
-                      const orderId = order.insertedId;
-          
-                      userHelpers.generateRazorpay(orderId, total).then((response) => {
-                        res.json({
-                          response: response,
-                          paymentMethod: "card",
-                          userDetails: userDetails,
+                    });
+                } else if (req.body.paymentMethod === "card") {
+                    const orderId = order.insertedId;
+
+                    userHelpers
+                        .generateRazorpay(orderId, total)
+                        .then((response) => {
+                            res.json({
+                                response: response,
+                                paymentMethod: "card",
+                                userDetails: userDetails,
+                            });
                         });
-                      });
-                    } else {
-          
-                      const exchangeRate = 0.013;
-                      const totalCost = (Number(req.body.total) * exchangeRate).toFixed(0);
-                      const create_payment_json = {
+                } else {
+                    const exchangeRate = 0.013;
+                    const totalCost = (
+                        Number(req.body.total) * exchangeRate
+                    ).toFixed(0);
+                    const create_payment_json = {
                         intent: "sale",
                         payer: {
-                          payment_method: "paypal",
+                            payment_method: "paypal",
                         },
-                        redirect_urls: {                         
-                          return_url: "https://malefashion.website/success",
-                          cancel_url: "https://malefashion.website/cancel",
+                        redirect_urls: {
+                            return_url: "https://malefashion.website/success",
+                            cancel_url: "https://malefashion.website/cancel",
                         },
                         transactions: [
-                          {
-                            amount: {
-                              currency: "USD",
-                              total: `${totalCost}`,
+                            {
+                                amount: {
+                                    currency: "USD",
+                                    total: `${totalCost}`,
+                                },
+                                description:
+                                    "MALE FASHION SHOPPING PLATFORM PAYPAL PAYMENT",
                             },
-                            description: "MALE FASHION SHOPPING PLATFORM PAYPAL PAYMENT",
-                          },
                         ],
-                      };
-          
-                      paypal.payment.create(create_payment_json, function (error, payment) {
-                        if (error) {
-                          res.render('users/failure', { user: true, userName: req.session.userName });
-                        } else if (payment) {
-                          try {
-                            req.session.orderId = order.insertedId;
-                            userHelpers.changeOrderStatus(order.insertedId).then(() => { console.log("changed") }).catch(() => { });
-                          } catch (err) {
-                            console.log(err);
-                          } finally {
-                            for (let i = 0; i < payment.links.length; i++) {
-                              if (payment.links[i].rel === "approval_url") {
-                                res.json({
-                                  approval_link: payment.links[i].href,
-                                  status: "success"
-                                })
-                              }
+                    };
+
+                    paypal.payment.create(
+                        create_payment_json,
+                        function (error, payment) {
+                            if (error) {
+                                res.render("users/failure", {
+                                    user: true,
+                                    userName: req.session.userName,
+                                });
+                            } else if (payment) {
+                                try {
+                                    req.session.orderId = order.insertedId;
+                                    userHelpers
+                                        .changeOrderStatus(order.insertedId)
+                                        .then(() => {
+                                            console.log("changed");
+                                        })
+                                        .catch(() => {});
+                                } catch (err) {
+                                    console.log(err);
+                                } finally {
+                                    for (
+                                        let i = 0;
+                                        i < payment.links.length;
+                                        i++
+                                    ) {
+                                        if (
+                                            payment.links[i].rel ===
+                                            "approval_url"
+                                        ) {
+                                            res.json({
+                                                approval_link:
+                                                    payment.links[i].href,
+                                                status: "success",
+                                            });
+                                        }
+                                    }
+                                }
                             }
-                          }
                         }
-                      });
-                    }
-                  });
-              } catch (err) {
-                console.log(err);
-              }
-            },
-//paypal success And error
-paypalSuccess: (req, res) => {
-  const payerId = req.query.PayerID;
-  const paymentId = req.query.paymentId;
-  const execute_payment_json = {
-    payer_id: payerId,
-    transactions: [
-      {
-        amount: {
-          currency: "USD",
-          total: "25.00",
-        },
-      },
-    ],
-  };
-  paypal.payment.execute(paymentId, execute_payment_json, (error, payment) => {
-    const userName = req.session.userName;
-    if (error) {
-      userHelpers.changeOrderPaymentStatus(req.session.orderId).then(() => {
-        res.render('user/failure', { user: req.session.user, userName });
-      }).catch(() => { });
-    } else {
-      userHelpers.changeOrderStatus(req.session.orderId).then(() => {
-      res.render('user/success', { user: req.session.user, payerId, paymentId, userName });
-    }).catch(() => { });
-  }
-  }
-  );
-},
+                    );
+                }
+            });
+        } catch (err) {
+            console.log(err);
+        }
+    },
+    //paypal success And error
+    paypalSuccess: (req, res) => {
+        const payerId = req.query.PayerID;
+        const paymentId = req.query.paymentId;
+        const execute_payment_json = {
+            payer_id: payerId,
+            transactions: [
+                {
+                    amount: {
+                        currency: "USD",
+                        total: "25.00",
+                    },
+                },
+            ],
+        };
+        paypal.payment.execute(
+            paymentId,
+            execute_payment_json,
+            (error, payment) => {
+                const userName = req.session.userName;
+                if (error) {
+                    userHelpers
+                        .changeOrderPaymentStatus(req.session.orderId)
+                        .then(() => {
+                            res.render("user/failure", {
+                                user: req.session.user,
+                                userName,
+                            });
+                        })
+                        .catch(() => {});
+                } else {
+                    userHelpers
+                        .changeOrderStatus(req.session.orderId)
+                        .then(() => {
+                            res.render("user/success", {
+                                user: req.session.user,
+                                payerId,
+                                paymentId,
+                                userName,
+                            });
+                        })
+                        .catch(() => {});
+                }
+            }
+        );
+    },
 
-failure: (req, res) => {
-  res.render('user/failure', { user: true, userName: req.session.userName });
-},
+    failure: (req, res) => {
+        res.render("user/failure", {
+            user: true,
+            userName: req.session.userName,
+        });
+    },
 
-// Orders Page
-orders: async (req, res) => {
-    const userName = req.session.userName;
-    const userId = req.session.user._id;
-    const orders = await userHelpers.getOrders(userId);
-    cartCount = await userHelpers.getCartCount(req.session.user._id); 
-    orders.forEach(order => {
-      order.isCancelled = order.status==="Cancelled"?true:false;
-      order.isDelivered = order.status==="Delivered"?true:false;
-      order.isReturned = order.status==="Return"?true:false;
-      const newDate = new Date(order.date);
-      const year = newDate.getFullYear();
-      const month = newDate.getMonth() + 1;
-      const day = newDate.getDate();
-      const formattedDate = `${day < 10 ? '0' + day : day}-${month < 10 ? '0' + month : month}-${year}`;
-      order.date = formattedDate;
-    });
-    res.render("user/orders", { user: true, userName, orders,cartCount});
-  },
+    // Orders Page
+    orders: async (req, res) => {
+        const userName = req.session.userName;
+        const userId = req.session.user._id;
+        const orders = await userHelpers.getOrders(userId);
+        cartCount = await userHelpers.getCartCount(req.session.user._id);
+        orders.forEach((order) => {
+            order.isCancelled = order.status === "Cancelled" ? true : false;
+            order.isDelivered = order.status === "Delivered" ? true : false;
+            order.isReturned = order.status === "Return" ? true : false;
+            const newDate = new Date(order.date);
+            const year = newDate.getFullYear();
+            const month = newDate.getMonth() + 1;
+            const day = newDate.getDate();
+            const formattedDate = `${day < 10 ? "0" + day : day}-${
+                month < 10 ? "0" + month : month
+            }-${year}`;
+            order.date = formattedDate;
+        });
+        res.render("user/orders", { user: true, userName, orders, cartCount });
+    },
 
     cancelOrder: (req, res) => {
         const orderId = req.params.id;
         const reason = req.body.reason;
         userHelpers.cancelOrder(orderId, reason).then(() => {
-          res.redirect("back");
+            res.redirect("back");
         });
-      },
+    },
 
     viewDet: async (req, res) => {
         const userName = req.session.userName;
         const orderId = req.params.id;
         const orders = await userHelpers.getOrderedProducts(orderId);
-        cartCount = await userHelpers.getCartCount(req.session.user._id); 
-        res.render("user/viewDet", { user: true, userName, orders,cartCount });
+        cartCount = await userHelpers.getCartCount(req.session.user._id);
+        res.render("user/viewDet", { user: true, userName, orders, cartCount });
     },
 
-    returnOrder:(req, res) => {
+    returnOrder: (req, res) => {
         const orderId = req.params.id;
         const reason = req.body.reason;
         userHelpers.returnProduct(orderId, reason).then(() => {
-          res.redirect('back');
-        })
-      },
-    invoicegenerator:(req, res)=> {
+            res.redirect("back");
+        });
+    },
+    invoicegenerator: (req, res) => {
         const userName = req.session.userName;
         userHelpers.getOrderedProducts(req.params.id).then((singleproduct) => {
-            userHelpers.getSingleorder(req.params.id).then((order) => { 
-            res.render('user/invoice', { user: true, singleproduct, order, userName })
-          })
-        })
-    
-      },
+            userHelpers.getSingleorder(req.params.id).then((order) => {
+                res.render("user/invoice", {
+                    user: true,
+                    singleproduct,
+                    order,
+                    userName,
+                });
+            });
+        });
+    },
 
-//Price Sort Filter 
-  priceFilter: async (req, res) => {
-    req.session.minPrice = req.body.minPrice;
-    req.session.maxPrice = req.body.maxPrice;
-    const category = req.session.category; 
-    req.session.filteredProduct = await productHelpers.filterPrice(req.session.minPrice, req.session.maxPrice, category);
-    res.json({
-      status: "success"
-    });
-  },
+    //Price Sort Filter
+    priceFilter: async (req, res) => {
+        req.session.minPrice = req.body.minPrice;
+        req.session.maxPrice = req.body.maxPrice;
+        const category = req.session.category;
+        req.session.filteredProduct = await productHelpers.filterPrice(
+            req.session.minPrice,
+            req.session.maxPrice,
+            category
+        );
+        res.json({
+            status: "success",
+        });
+    },
 
-  sortPrice: async (req, res) => {
+    sortPrice: async (req, res) => {
         req.session.minPrice = req.body.minPrice;
         req.session.maxPrice = req.body.maxPrice;
         const category = req.session.category;
@@ -834,22 +955,30 @@ orders: async (req, res) => {
     },
 
     // Wishlist
-  wishlist: async (req, res) => {
+    wishlist: async (req, res) => {
         const userName = req.session.userName;
         const wishlist = await userHelpers.getWishlist(req.session.user._id);
-        cartCount = await userHelpers.getCartCount(req.session.user._id); 
-        res.render("user/wishlist", { user: true, userName, wishlist,cartCount });
-    },
-  wishlistPage: async (req, res) => {
-        const productId = req.params.id;
-        const message = await userHelpers.addToWishlist(req.session.user._id, productId);
-        res.json({
-          status: "success",
-          message: message
+        cartCount = await userHelpers.getCartCount(req.session.user._id);
+        res.render("user/wishlist", {
+            user: true,
+            userName,
+            wishlist,
+            cartCount,
         });
-      },
+    },
+    wishlistPage: async (req, res) => {
+        const productId = req.params.id;
+        const message = await userHelpers.addToWishlist(
+            req.session.user._id,
+            productId
+        );
+        res.json({
+            status: "success",
+            message: message,
+        });
+    },
 
- deleteWishlist: (req, res) => {
+    deleteWishlist: (req, res) => {
         const userId = req.session.user._id;
         const productId = req.params.id;
         userHelpers.deleteWishlist(userId, productId);
@@ -858,92 +987,99 @@ orders: async (req, res) => {
 
     // User Profile
     userProfile: async (req, res) => {
-      const userName = req.session.userName;
-      const userProfile = await userHelpers.getUser(req.session.user._id);
-      cartCount = await userHelpers.getCartCount(req.session.user._id); 
-      res.render("user/userProfile", { user: true, userName, userDetailes: req.session.user, userProfile,cartCount });
+        const userName = req.session.userName;
+        const userProfile = await userHelpers.getUser(req.session.user._id);
+        cartCount = await userHelpers.getCartCount(req.session.user._id);
+        res.render("user/userProfile", {
+            user: true,
+            userName,
+            userDetailes: req.session.user,
+            userProfile,
+            cartCount,
+        });
     },
     userProfilePost: (req, res) => {
-      const userId = req.session.user._id;
-      userHelpers.editProfile(userId, req.body).then(() => {
-        req.session.changePassword = "";
-        res.redirect('/userProfile');
-      });
+        const userId = req.session.user._id;
+        userHelpers.editProfile(userId, req.body).then(() => {
+            req.session.changePassword = "";
+            res.redirect("/userProfile");
+        });
     },
-    
-      manageAddress: async(req, res) => {
+
+    manageAddress: async (req, res) => {
         const userName = req.session.userName;
         const addresses = await userHelpers.getAddress(req.session.user._id);
-        res.render('user/manageAddress', {user: true, userName, addresses})
-      },
+        res.render("user/manageAddress", { user: true, userName, addresses });
+    },
 
-      getWallet: async (req, res) => {
+    getWallet: async (req, res) => {
         try {
-          const userId = req.session.user._id;
-          const wallet = await userHelpers.getWallet(userId);
-          cartCount = await userHelpers.getCartCount(req.session.user._id); 
-          res.render('user/wallet', { user: true, userName: req.session.userName, wallet: wallet,cartCount });
+            const userId = req.session.user._id;
+            const wallet = await userHelpers.getWallet(userId);
+            cartCount = await userHelpers.getCartCount(req.session.user._id);
+            res.render("user/wallet", {
+                user: true,
+                userName: req.session.userName,
+                wallet: wallet,
+                cartCount,
+            });
         } catch (error) {
-          res.render('error', { message: 'An error occurred', error: error });
+            res.render("error", { message: "An error occurred", error: error });
         }
-      },
-      
+    },
 
-      profileImage: async (req, res) => {
+    profileImage: async (req, res) => {
         const imageUrl = req.file;
         const userId = req.session.user._id;
         try {
-          const result = await cloudinary.uploader.upload(imageUrl.path);
-    
-          if (result) {
-            res.json({
-              status: true,
-              data: result.url,
-            })
-    
-            await userHelpers.profileImage(userId, result.url);
-          } else {
-            console.log("Image Not Found")
-          }
-    
+            const result = await cloudinary.uploader.upload(imageUrl.path);
+
+            if (result) {
+                res.json({
+                    status: true,
+                    data: result.url,
+                });
+
+                await userHelpers.profileImage(userId, result.url);
+            } else {
+                console.log("Image Not Found");
+            }
         } catch (error) {
-          console.log(error);
+            console.log(error);
         }
-    
-      },
+    },
 
-      //Razorpay 
-  verifyPayment : (req, res)=>{
-    console.log(req.body+"verify payment");
-    userHelpers.verifyPayment(req.body).then(()=>{
-      userHelpers.changeOrderStatus(req.body.order.receipt).then(()=>{
-        res.json({
-          status: true
+    //Razorpay
+    verifyPayment: (req, res) => {
+        console.log(req.body + "verify payment");
+        userHelpers.verifyPayment(req.body).then(() => {
+            userHelpers.changeOrderStatus(req.body.order.receipt).then(() => {
+                res.json({
+                    status: true,
+                });
+            });
         });
-      })
-    })
-  },
+    },
 
-  couponApply:(req, res)=> {
-    const userId = req.session.user._id;
-    userHelpers.couponApply(req.body.couponCode, userId).then((coupon)=> {
-      if(coupon){
-        if(coupon === 'couponExists'){
-          res.json({
-            status:"coupon is already used, try another coupon"
-          })
-        }else{
-          res.json({
-            status: "success",
-            coupon: coupon
-          })
-        }
-      }else{
-        res.json({
-          status: "coupon is not valid !!"
-        })
-      }
-    });
-  },
-
-}
+    couponApply: (req, res) => {
+        const userId = req.session.user._id;
+        userHelpers.couponApply(req.body.couponCode, userId).then((coupon) => {
+            if (coupon) {
+                if (coupon === "couponExists") {
+                    res.json({
+                        status: "coupon is already used, try another coupon",
+                    });
+                } else {
+                    res.json({
+                        status: "success",
+                        coupon: coupon,
+                    });
+                }
+            } else {
+                res.json({
+                    status: "coupon is not valid !!",
+                });
+            }
+        });
+    },
+};

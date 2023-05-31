@@ -104,34 +104,36 @@ module.exports = {
     },
     editProduct: (productId, data) => {
         return new Promise((resolve, reject) => {
-          console.log(data)
-          productId = new objectId(productId)
-          db.get().collection(collection.PRODUCT_COLLECTION)
-            .updateOne(
-              {
-                _id: productId
-              },
-              {
-                $set: {
-                  name: data.name,
-                  productid:data.productid,
-                  category: data.category,
-                  description: data.description,
-                  price: Number(data.price),
-                  slug: slugify(`${data.name} ${data.category}`),
-                  stock: Number(data.stock),
-    
-                }
-              }
-            ).then((response) => {
-              console.log(response);
-              resolve()
-            }).catch((err) => {
-              console.log(err);
-              reject();
-            })
-        })
-      },
+            console.log(data);
+            productId = new objectId(productId);
+            db.get()
+                .collection(collection.PRODUCT_COLLECTION)
+                .updateOne(
+                    {
+                        _id: productId,
+                    },
+                    {
+                        $set: {
+                            name: data.name,
+                            productid: data.productid,
+                            category: data.category,
+                            description: data.description,
+                            price: Number(data.price),
+                            slug: slugify(`${data.name} ${data.category}`),
+                            stock: Number(data.stock),
+                        },
+                    }
+                )
+                .then((response) => {
+                    console.log(response);
+                    resolve();
+                })
+                .catch((err) => {
+                    console.log(err);
+                    reject();
+                });
+        });
+    },
     deleteProducts: (productId) => {
         return new Promise((resolve, reject) => {
             db.get()
@@ -335,23 +337,23 @@ module.exports = {
                 }
                 resolve(product);
             } catch {
-                reject(err)
+                reject(err);
             }
         });
     },
     totalPages: () => {
         return new Promise(async (resolve, reject) => {
-          try {
-            const totalCount = await db
-              .get()
-              .collection(collection.PRODUCT_COLLECTION)
-              .countDocuments({});
-            resolve(totalCount);
-          } catch (error) {
-            reject(error);
-          }
+            try {
+                const totalCount = await db
+                    .get()
+                    .collection(collection.PRODUCT_COLLECTION)
+                    .countDocuments({});
+                resolve(totalCount);
+            } catch (error) {
+                reject(error);
+            }
         });
-      },   
+    },
     totalOrdersPlaced: () => {
         return new Promise(async (resolve, reject) => {
             try {

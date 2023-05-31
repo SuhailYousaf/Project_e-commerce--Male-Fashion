@@ -150,7 +150,7 @@ module.exports = {
                 console.log(err);
             });
     },
-    
+
     adminsearchuser: (req, res) => {
         const userId = req.params.id;
         adminHelpers
@@ -183,7 +183,6 @@ module.exports = {
         const adminName = req.session.adminName;
         categoryHelpers.getCategory().then((category) => {
             console.log(category);
-            //res.render('admin/adminCategory', {admin: true, adminName, category})
             res.render("admin/adminAddProduct", {
                 admin: true,
                 adminName,
@@ -269,34 +268,40 @@ module.exports = {
 
     addCategory: (req, res) => {
         try {
-            categoryHelpers.addCategory(req.body).then((response) => {
-                if (response.status === false) {
-                    // Category already added
-                    res.redirect('/admin/adminCategory?success=false');
-                } else {
-                    // Category added successfully
-                    res.redirect('/admin/adminCategory?success=true');
-                }
-            }).catch((err) => {
-                // Handle the error here and show an alert to the admin
-                res.status(500).json({ error: err });
-            });
+            categoryHelpers
+                .addCategory(req.body)
+                .then((response) => {
+                    if (response.status === false) {
+                        // Category already added
+                        res.redirect("/admin/adminCategory?success=false");
+                    } else {
+                        // Category added successfully
+                        res.redirect("/admin/adminCategory?success=true");
+                    }
+                })
+                .catch((err) => {
+                    // Handle the error here and show an alert to the admin
+                    res.status(500).json({ error: err });
+                });
         } catch (error) {
-            res.redirect('back');
+            res.redirect("back");
         }
     },
     // Orders
-  
+
     deleteCategory: (req, res) => {
         const category = req.params.id;
         const cateName = req.params.name;
-        categoryHelpers.deleteCategory(category, cateName).then(() => {
-            res.redirect('/admin/adminCategory');
-        }).catch((err) => {
-            console.log(err);
-        })
+        categoryHelpers
+            .deleteCategory(category, cateName)
+            .then(() => {
+                res.redirect("/admin/adminCategory");
+            })
+            .catch((err) => {
+                console.log(err);
+            });
     },
-  
+
     adminOrder: (req, res) => {
         const adminName = req.session.adminName;
         adminHelpers.getUserOrder().then((adminOrder) => {
@@ -322,30 +327,32 @@ module.exports = {
             });
     },
 
-    adminOrderView: async (req, res)=> {
+    adminOrderView: async (req, res) => {
         const orderId = req.params.id;
         const order = await adminHelpers.getSingleOrder(orderId);
-        res.render('admin/adminOrderView', {admin: true, adminName: req.session.adminName, order})
+        res.render("admin/adminOrderView", {
+            admin: true,
+            adminName: req.session.adminName,
+            order,
+        });
     },
 
-    adminRefund:async(req, res)=> {
+    adminRefund: async (req, res) => {
         const orderId = req.params.id;
         const userId = await adminHelpers.getSingle(orderId);
-        console.log('userId')
-        console.log(userId)
-        console.log('req.body.order.userId')
-        adminHelpers.adminRefund(orderId,userId).then(()=>{
-            res.redirect('back');
-        })
+        console.log("userId");
+        console.log(userId);
+        console.log("req.body.order.userId");
+        adminHelpers.adminRefund(orderId, userId).then(() => {
+            res.redirect("back");
+        });
     },
-      
 
     //view Details
 
     viewDetails: async (req, res) => {
         const adminName = req.session.adminName;
         const orderId = req.params.id;
-
         adminHelpers.getOrderedProducts(orderId).then((orders) => {
             if (req.session.admin) {
                 res.render("admin/viewDetails", {
@@ -378,14 +385,15 @@ module.exports = {
     },
 
     adminAddCoupon: (req, res) => {
-        adminHelpers.adminAddCoupon(req.body)
-          .then((response) => {
-            res.json(response); // Send the response as JSON
-          })
-          .catch(() => {
-            res.json({ success: false, message: "Failed to add coupon" });
-          });
-      },
+        adminHelpers
+            .adminAddCoupon(req.body)
+            .then((response) => {
+                res.json(response); // Send the response as JSON
+            })
+            .catch(() => {
+                res.json({ success: false, message: "Failed to add coupon" });
+            });
+    },
 
     adminDeactivate: (req, res) => {
         const couponId = req.params.id;
@@ -410,11 +418,11 @@ module.exports = {
                 res.redirect("/admin/adminCoupon");
             });
     },
-    adminEditCoupon:(req, res)=> {
-        const couponId = req.params.id; 
-        adminHelpers.adminEditCoupon(couponId, req.body).then(()=> {
-            res.redirect('/admin/adminCoupon')
-        })
+    adminEditCoupon: (req, res) => {
+        const couponId = req.params.id;
+        adminHelpers.adminEditCoupon(couponId, req.body).then(() => {
+            res.redirect("/admin/adminCoupon");
+        });
     },
 
     //adminSalesReport
@@ -449,68 +457,78 @@ module.exports = {
     adminSalesReportFilterPost: async (req, res) => {
         const fromDate = req.body.fromDate;
         const toDate = req.body.toDate;
-    
+
         let filteredOrders = await adminHelpers.filterDate([fromDate, toDate]);
-    
+
         let totalEarnings = 0;
         if (filteredOrders.length >= 1) {
-          filteredOrders.forEach(eachOrder => {
-            eachOrder.productCount = eachOrder.item.length;
-            totalEarnings += eachOrder.total;
-    
-            // Date formatting
-            const newDate = new Date(eachOrder.date);
-            const year = newDate.getFullYear();
-            const month = newDate.getMonth() + 1;
-            const day = newDate.getDate();
-            const formattedDate = `${day < 10 ? '0' + day : day}-${month < 10 ? '0' + month : month}-${year}`;
-            eachOrder.date = formattedDate;
-          });
+            filteredOrders.forEach((eachOrder) => {
+                eachOrder.productCount = eachOrder.item.length;
+                totalEarnings += eachOrder.total;
+
+                // Date formatting
+                const newDate = new Date(eachOrder.date);
+                const year = newDate.getFullYear();
+                const month = newDate.getMonth() + 1;
+                const day = newDate.getDate();
+                const formattedDate = `${day < 10 ? "0" + day : day}-${
+                    month < 10 ? "0" + month : month
+                }-${year}`;
+                eachOrder.date = formattedDate;
+            });
         } else {
-          filteredOrders = false;
+            filteredOrders = false;
         }
-    
-        res.render('admin/adminSalesReport', { admin: true, adminName: req.session.adminName, deliveredOrders: filteredOrders, totalEarnings });
-      },
+
+        res.render("admin/adminSalesReport", {
+            admin: true,
+            adminName: req.session.adminName,
+            deliveredOrders: filteredOrders,
+            totalEarnings,
+        });
+    },
 
     // Admin Banner Management
-    adminBanner:(req, res)=> {
-        adminHelpers.getBanner().then((banner)=> {
-            res.render('admin/adminBanner', {admin: true, adminName:req.session.adminName, banner});
-        })
+    adminBanner: (req, res) => {
+        adminHelpers.getBanner().then((banner) => {
+            res.render("admin/adminBanner", {
+                admin: true,
+                adminName: req.session.adminName,
+                banner,
+            });
+        });
     },
 
-    adminAddBanner: async (req, res)=> {
-        try{
+    adminAddBanner: async (req, res) => {
+        try {
             const image = await cloudinary.uploader.upload(req.file.path);
             req.body.image = image.url;
-
-        }catch (err){
+        } catch (err) {
             console.log(err);
         }
-        
-        adminHelpers.addBanner(req.body).then(()=> {
-            res.redirect('back')
-        })
+
+        adminHelpers.addBanner(req.body).then(() => {
+            res.redirect("back");
+        });
     },
 
-    adminEditBanner: async(req, res)=> {
+    adminEditBanner: async (req, res) => {
         const bannerId = req.params.id;
-        try{
-        const image = await cloudinary.uploader.upload(req.file.path);
-        adminHelpers.adminBannerImageEdit(bannerId, image.url);
-        }catch (err){
+        try {
+            const image = await cloudinary.uploader.upload(req.file.path);
+            adminHelpers.adminBannerImageEdit(bannerId, image.url);
+        } catch (err) {
             console.log(err);
         }
-        adminHelpers.adminEditBanner(bannerId, req.body).then(()=> {
-            res.redirect('/admin/adminBanner');
-        })
+        adminHelpers.adminEditBanner(bannerId, req.body).then(() => {
+            res.redirect("/admin/adminBanner");
+        });
     },
 
-    adminActivateBanner:(req, res)=> {
+    adminActivateBanner: (req, res) => {
         const bannerId = req.params.id;
-        adminHelpers.adminActivateBanner(bannerId).then(()=> {
-            res.redirect('/admin/adminBanner')
-        })
-    }
+        adminHelpers.adminActivateBanner(bannerId).then(() => {
+            res.redirect("/admin/adminBanner");
+        });
+    },
 };
