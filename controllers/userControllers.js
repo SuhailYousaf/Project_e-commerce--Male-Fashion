@@ -17,7 +17,6 @@ require("dotenv").config();
 const accountSid = process.env.TWILIO_ACCOUNT_SID;
 const authToken = process.env.TWILIO_AUTH_TOKEN;
 const serviceSid = process.env.TWILIO_SERVICE_SID;
-console.log(accountSid, serviceSid, authToken);
 const client = require("twilio")(accountSid, authToken);
 
 const paypal_client_id = process.env.PAYPAL_CLIENT_ID;
@@ -384,10 +383,11 @@ module.exports = {
         // Remove the rePassword field from the request body
         delete req.body.rePassword;
         // Password check
-        const passwordRegex =
-            /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*]).{8,}$/;
+        const passwordRegex = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*]).{8,}$/;
         if (!passwordRegex.test(req.body.password)) {
+            
             res.render("user/signup", {
+              
                 user: true,
                 errMsg: "Password must contain 8 characters, uppercase, lowercase, number, and special(!@#$%^&*)",
             });
@@ -408,10 +408,12 @@ module.exports = {
             .services(serviceSid)
             .verifications.create({ to: "+91" + phone, channel: "sms" })
             .then(() => {
+                
                 req.session.userDetailes = req.body;
                 res.redirect("/otpverification");
             })
             .catch((err) => {
+                console.log(accountSid, serviceSid, authToken);
                 req.session.userDetailes = req.body;
                 res.render("user/signup", {
                     user: true,
