@@ -147,7 +147,7 @@
 
     function export_data() {
         let data = document.getElementById('invoice');
-        var fp = XLSX.utils.table_to_book(data, { sheet: 'arjun' });
+        var fp = XLSX.utils.table_to_book(data, { sheet: 'suhail' });
         XLSX.write(fp, {
             bookType: 'xlsx',
             type: 'base64'

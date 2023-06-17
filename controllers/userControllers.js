@@ -1004,13 +1004,10 @@ module.exports = {
     userProfilePost: async (req, res) => {
         try {
           const userId = req.session.user._id;
-          await userHelpers.editProfile(userId, req.body);
+          await userHelpers.editProfile (userId, req.body);
           req.session.changePassword = "";
           res.redirect("/userProfile");
-        } catch (error) {
-          // Handle the error here
-          console.error("An error occurred:", error);
-          // You can redirect to an error page or send an error response
+        } catch (error) {          
           res.redirect("/error");
         }
       },
